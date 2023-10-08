@@ -48,7 +48,7 @@ const register = async (req, res) => {
     const token = jwt.sign({ user: savedUser }, process.env.JWT_SECRET);
 
     // Respond with success message, user data, and token
-    res.json({ msg: "User created", user: savedUser, token });
+    res.status(200).json({ msg: "User created", user: savedUser, token });
   } catch (err) {
     return res.status(500).json({ msg: err.message });
   }
@@ -80,7 +80,7 @@ const login = async (req, res) => {
     const token = jwt.sign({ user }, process.env.JWT_SECRET);
 
     // Respond with success message, user data, and token
-    res.json({ msg: "User logged in", user, token });
+    res.status(200).json({ msg: "User logged in", user, token });
   } catch (err) {
     return res.status(500).json({ msg: err.message });
   }

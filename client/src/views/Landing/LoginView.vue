@@ -18,7 +18,8 @@
           class="input-field border outline-none px-3 py-2"
         />
         <button
-          class="btn bg-sky-500 text-white py-2 px-3 rounded-md hover:bg-sky-600 transition-all duration-200"
+          :disabled="loading"
+          class="btn bg-sky-500 text-white py-2 px-3 rounded-md hover:bg-sky-600 transition-all duration-200 disabled:bg-slate-200 disabled:text-slate-500 disabled:cursor-not-allowed"
           type="submit"
         >
           Login
@@ -33,11 +34,14 @@
 </template>
 <script setup>
 import { useStore } from "vuex";
-import { reactive } from "vue";
+import { reactive, computed } from "vue";
 const store = useStore();
 const user = reactive({
   username: "",
   password: "",
+});
+const loading = computed(() => {
+  return store.state.loading;
 });
 const login = async (e) => {
   e.preventDefault();

@@ -1,9 +1,28 @@
 import { createStore } from "vuex";
 import authModule from "./modules/auth";
 export default createStore({
-  state: {},
+  state: {
+    loading: false,
+    toast: {
+      show: false,
+      message: "",
+      type: "",
+    },
+  },
   getters: {},
-  mutations: {},
+  mutations: {
+    setLoading(state, payload) {
+      state.loading = payload;
+    },
+    setToast(state, payload) {
+      state.toast = payload;
+      setTimeout(() => {
+        state.toast.show = false;
+        state.toast.message = "";
+        state.toast.type = "";
+      }, 3000);
+    },
+  },
   actions: {},
   modules: {
     auth: authModule,
