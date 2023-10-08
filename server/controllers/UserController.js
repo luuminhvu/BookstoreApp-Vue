@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 // Register
 const register = async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { username, password, fullname, gender } = req.body;
 
     // Check if both username and password are provided
     if (!username || !password) {
@@ -39,6 +39,8 @@ const register = async (req, res) => {
     const newUser = new User({
       username: username.trim().toLowerCase(),
       password: hashedPass,
+      fullname: fullname,
+      gender: gender,
     });
 
     // Save the user to the database
@@ -85,5 +87,53 @@ const login = async (req, res) => {
     return res.status(500).json({ msg: err.message });
   }
 };
+const updateUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const updatedData = req.body.account;
 
-module.exports = { register, login };
+    // Kiểm tra xem người dùng tồn tại
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ msg: "Người dùng không tồn tại" });
+    }
+
+    // Cập nhật thông tin người dùng
+    const updatedUser = await User.findByIdAndUpdate(userId, updatedData, {
+      new: true,
+    });
+
+    res
+      .status(200)
+      .json({ user: updatedUser, msg: "Người dùng đã được cập nhật" });
+  } catch (err) {
+    return res.status(500).json({ msg: err.message });
+  }
+};
+
+const deleteUser = async (req, res) => {
+  try {
+    const deleteUser = await User.findByIdAndDelete(req.params.id);
+    if (deleteUser) {
+      res.status(200).json({ msg: "User deleted" });
+    } else {
+      res.status(404).json({ msg: "User not found" });
+    }
+  } catch (err) {
+    return res.status(500).json({ msg: err.message });
+  }
+};
+const getUser = async (req, res) => {
+  try {
+    const getUser = await User.findById(req.params.id);
+    if (getUser) {
+      res.status(200).json({ user: getUser });
+    } else {
+      res.status(404).json({ msg: "User not found" });
+    }
+  } catch (err) {
+    return res.status(500).json({ msg: err.message });
+  }
+};
+module.exports = { register, login, updateUser, deleteUser, getUser };

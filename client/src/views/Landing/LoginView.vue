@@ -27,7 +27,7 @@
       </div>
       <p class="text-gray-500 mt-4">
         Don't have an account?
-        <router-link to="/register">Login</router-link>
+        <router-link to="/register">Register</router-link>
       </p>
     </form>
   </div>

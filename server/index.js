@@ -4,6 +4,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const path = require("path");
 const UserRouter = require("./routes/auth.js");
+const AccountRouter = require("./routes/accounts.js");
 // Create a new Express app
 const app = express();
 app.use(express.json());
@@ -15,6 +16,7 @@ app.get("/", (req, res) => {
   res.send("Hello, world!");
 });
 app.use("/", UserRouter);
+app.use("/api/v1/accounts", AccountRouter);
 mongoose
   .connect(URI, {
     useNewUrlParser: true,

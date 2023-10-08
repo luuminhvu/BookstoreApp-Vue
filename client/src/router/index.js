@@ -6,6 +6,7 @@ import RegisterView from "../views/Landing/RegisterView.vue";
 import ExploreView from "../layouts/ExploreView.vue";
 import LandingView from "../layouts/LandingView.vue";
 import IndexView from "../views/Landing/IndexView.vue";
+import AccountView from "../views/Explore/AccountView.vue";
 
 const routes = [
   {
@@ -47,6 +48,11 @@ const routes = [
         path: "",
         name: "Home",
         component: HomeView,
+      },
+      {
+        path: "account",
+        name: "Account",
+        component: AccountView,
       },
     ],
     beforeEnter: (to, from, next) => {

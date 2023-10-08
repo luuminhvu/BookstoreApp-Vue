@@ -29,6 +29,9 @@ const toastOptions = computed(() => {
 .toast-box {
   animation: toast 3s ease-in-out;
 }
+.toast {
+  z-index: 9999;
+}
 @keyframes toast {
   0% {
     transform: translateY(0);

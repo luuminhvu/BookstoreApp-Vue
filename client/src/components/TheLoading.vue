@@ -1,5 +1,7 @@
 <template lang="">
-  <div class="loading-spinner fixed top-2 left-2">
+  <div
+    class="loading-spinner fixed top-0 left-0 w-full h-full flex justify-center items-center bg-white bg-opacity-50"
+  >
     <div class="lds-spinner">
       <div></div>
       <div></div>
@@ -20,6 +22,9 @@
 export default {};
 </script>
 <style scoped>
+.loading-spinner {
+  z-index: 9999;
+}
 .lds-spinner {
   color: official;
   display: inline-block;
