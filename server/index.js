@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const path = require("path");
 const UserRouter = require("./routes/auth.js");
 const AccountRouter = require("./routes/accounts.js");
+const BookRouter = require("./routes/book.js");
 // Create a new Express app
 const app = express();
 app.use(express.json());
@@ -17,6 +18,7 @@ app.get("/", (req, res) => {
 });
 app.use("/", UserRouter);
 app.use("/api/v1/accounts", AccountRouter);
+app.use("/api/v1/books", BookRouter);
 mongoose
   .connect(URI, {
     useNewUrlParser: true,
@@ -24,10 +26,6 @@ mongoose
   })
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("Error connecting to MongoDB", err));
-
-// Define routes
-
-// Start the server
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
   console.log(`Server listening on port ${port}`);

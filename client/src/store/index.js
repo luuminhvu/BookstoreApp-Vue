@@ -1,5 +1,6 @@
 import { createStore } from "vuex";
 import authModule from "./modules/auth";
+import bookModule from "./modules/book";
 export default createStore({
   state: {
     loading: false,
@@ -26,5 +27,6 @@ export default createStore({
   actions: {},
   modules: {
     auth: authModule,
+    book: bookModule,
   },
 });

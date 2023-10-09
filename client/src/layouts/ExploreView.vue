@@ -1,11 +1,17 @@
-<template lang="">
+<template>
   <div>
     <nav
       class="navbar sticky top-0 left-0 bg-white p-4 flex flex-row items-center justify-between border-b-2 border-gray-200"
     >
-      <router-link class="text-lg font-extrabold" to="/explore"
-        >Home</router-link
-      >
+      <div class="logo">
+        <router-link to="/explore" class="text-3xl">
+          <img
+            class="w-36 h-16 object-cover"
+            src="../assets/logo1.png"
+            alt=""
+          />
+        </router-link>
+      </div>
       <div class="search">
         <input
           type="text"
@@ -25,11 +31,14 @@
         </router-link>
       </div>
     </nav>
-    <router-view />
   </div>
+  <router-view></router-view>
 </template>
 <script setup>
 import { useStore } from "vuex";
+import { onMounted } from "vue";
+import { ref } from "vue";
+import api from "@/services/api";
 const store = useStore();
 const logout = () => {
   store.dispatch("auth/logout");
