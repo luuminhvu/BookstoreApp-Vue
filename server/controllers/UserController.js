@@ -53,6 +53,7 @@ const register = async (req, res) => {
     res.status(200).json({ msg: "User created", user: savedUser, token });
   } catch (err) {
     return res.status(500).json({ msg: err.message });
+    console.log(err);
   }
 };
 const login = async (req, res) => {
