@@ -6,6 +6,7 @@ const path = require("path");
 const UserRouter = require("./routes/auth.js");
 const AccountRouter = require("./routes/accounts.js");
 const BookRouter = require("./routes/book.js");
+const OrderRouter = require("./routes/order.js");
 // Create a new Express app
 const app = express();
 app.use(express.json());
@@ -19,6 +20,7 @@ app.get("/", (req, res) => {
 app.use("/", UserRouter);
 app.use("/api/v1/accounts", AccountRouter);
 app.use("/api/v1/books", BookRouter);
+app.use("/api/v1/orders", OrderRouter);
 mongoose
   .connect(URI, {
     useNewUrlParser: true,

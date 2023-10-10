@@ -72,11 +72,12 @@
         </h1>
       </div>
       <div class="cart-checkout flex flex-row justify-center items-center">
-        <button
+        <router-link
+          to="/explore/checkout"
           class="btn bg-[#C92127] text-white py-2 px-3 rounded-md hover:bg-[#C92127] transition-all duration-200"
         >
           Checkout
-        </button>
+        </router-link>
       </div>
     </div>
   </div>
