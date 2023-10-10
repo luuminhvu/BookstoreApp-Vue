@@ -35,9 +35,10 @@
         <div class="book-quantity mt-3">
           <h1 class="text-lg font-bold mb-4 text-[#da7d52]">Số lượng:</h1>
           <input
+            v-model="quantity"
             type="number"
             class="border-2 border-gray-200 rounded-md w-40 h-10 px-2 py-1"
-            value="1"
+            min="1"
           />
           <div class="book-addToCart mt-5">
             <button
@@ -55,29 +56,46 @@
       </div>
     </div>
     <div class="book-detail-desc mt-3 border-t-2 border-gray-200">
-      <h1 class="text-lg font-bold mb-4 text-[#da7d52]">
+      <h1 class="text-lg font-bold mb-4 text-[#da7d52] mt-8">
         {{ book.desc }}
       </h1>
     </div>
   </div>
 </template>
 <script setup>
-import { onMounted } from "vue";
+import { onMounted, ref, computed } from "vue";
 import api from "@/services/api";
-import { ref } from "vue";
-//get params from url
+//get params from URL
 import { useRoute } from "vue-router";
+import { useStore } from "vuex";
+
 const route = useRoute();
 const id = route.params.id;
-const book = ref([]);
+const book = ref([]); // Initialize quantity with a default value of 1
+const quantity = ref(1);
+const store = useStore();
+
 const getBook = async () => {
   const res = await api.get(`/api/v1/books/${id}`);
   book.value = res.data.book;
 };
+
 onMounted(() => {
   getBook();
 });
+const loading = computed(() => store.state.loading);
+
+const addToCart = () => {
+  const cartItem = {
+    id: book.value._id,
+    title: book.value.title,
+    price: book.value.price,
+    quantity: quantity.value,
+  };
+  store.dispatch("cart/addToCart", cartItem);
+};
 </script>
+
 <style scoped>
 .demo {
   text-align: center;

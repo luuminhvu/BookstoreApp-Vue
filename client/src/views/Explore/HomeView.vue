@@ -39,7 +39,6 @@
 import { onMounted } from "vue";
 import { ref } from "vue";
 import api from "@/services/api";
-
 const books = ref([]);
 const getBooks = async () => {
   const res = await api.get("/api/v1/books");

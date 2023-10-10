@@ -20,8 +20,12 @@
         />
       </div>
       <div class="links space-x-6">
-        <router-link to="#" class="text-3xl">
+        <router-link to="/explore/cart" class="text-3xl relative">
           <ion-icon name="cart-outline"></ion-icon>
+          <span
+            class="text-sm font-bold text-[#45af4e] absolute -top-2 -right-2 bg-black rounded-full w-5 h-5 flex justify-center items-center"
+            >{{ cart.length }}</span
+          >
         </router-link>
         <router-link to="/explore/account" class="text-3xl">
           <ion-icon name="person-outline"></ion-icon>
@@ -36,12 +40,11 @@
 </template>
 <script setup>
 import { useStore } from "vuex";
-import { onMounted } from "vue";
-import { ref } from "vue";
-import api from "@/services/api";
+import { computed } from "vue";
 const store = useStore();
 const logout = () => {
   store.dispatch("auth/logout");
 };
+const cart = computed(() => store.state.cart.cart);
 </script>
 <style lang=""></style>

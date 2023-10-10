@@ -8,6 +8,7 @@ import LandingView from "../layouts/LandingView.vue";
 import IndexView from "../views/Landing/IndexView.vue";
 import AccountView from "../views/Explore/AccountView.vue";
 import BookDetailView from "../views/Explore/BookDetailView.vue";
+import CartView from "../views/Explore/CartView.vue";
 
 const routes = [
   {
@@ -59,6 +60,11 @@ const routes = [
         path: "books/:id",
         name: "Book",
         component: BookDetailView,
+      },
+      {
+        path: "cart",
+        name: "Cart",
+        component: CartView,
       },
     ],
     beforeEnter: (to, from, next) => {
