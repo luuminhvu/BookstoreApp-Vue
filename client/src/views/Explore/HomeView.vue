@@ -10,12 +10,12 @@
         <div
           v-for="book in books"
           :key="book._id"
-          class="book flex flex-col items-center shadow-lg p-4 w-[300px] m-auto h-[400px] rounded-md bg-green-200"
+          class="book flex flex-col items-center shadow-lg p-4 w-[300px] m-auto h-[400px] rounded-md bg-green-200 :hover:scale-105 transition-all duration-200"
         >
           <router-link :to="`/explore/books/${book._id}`">
             <img
               class="w-36 h-48 object-cover mb-3 rounded-md bg-white"
-              src="http://placekitten.com/300/400"
+              src="@/assets/lamgiauquachungkhoan.jpg"
               alt=""
             />
           </router-link>

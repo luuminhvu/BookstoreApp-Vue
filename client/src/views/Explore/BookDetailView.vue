@@ -7,7 +7,7 @@
       <div class="book-detail-img border-r-2 border-gray-200 border-l-2">
         <img
           class="w-80 h-96 object-cover mb-3 rounded-md bg-white m-auto"
-          src="http://placekitten.com/300/400"
+          src="@/assets/lamgiauquachungkhoan.jpg"
           alt=""
         />
       </div>

@@ -30,6 +30,10 @@
         <router-link to="/explore/account" class="text-3xl">
           <ion-icon name="person-outline"></ion-icon>
         </router-link>
+        <router-link :to="`/explore/order/${userNew._id}`" class="text-3xl">
+          <ion-icon name="wallet-outline">Ư</ion-icon>
+        </router-link>
+
         <router-link to="/" class="text-3xl" @click="logout">
           <ion-icon name="log-out-outline"></ion-icon>
         </router-link>
@@ -45,6 +49,8 @@ const store = useStore();
 const logout = () => {
   store.dispatch("auth/logout");
 };
+const user = computed(() => store.state.auth.account);
+const userNew = JSON.parse(user.value);
 const cart = computed(() => store.state.cart.cart);
 </script>
 <style lang=""></style>

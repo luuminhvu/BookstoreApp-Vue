@@ -34,3 +34,4 @@ const orderSchema = moongose.Schema(
     timestamps: true,
   }
 );
+module.exports = moongose.model("Order", orderSchema);

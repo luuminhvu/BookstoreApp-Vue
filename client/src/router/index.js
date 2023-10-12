@@ -10,6 +10,7 @@ import AccountView from "../views/Explore/AccountView.vue";
 import BookDetailView from "../views/Explore/BookDetailView.vue";
 import CartView from "../views/Explore/CartView.vue";
 import CheckoutView from "../views/Explore/CheckoutView.vue";
+import OrderView from "../views/Explore/OrderView.vue";
 
 const routes = [
   {
@@ -71,6 +72,11 @@ const routes = [
         path: "checkout",
         name: "Checkout",
         component: CheckoutView,
+      },
+      {
+        path: "order/:id",
+        name: "Order",
+        component: OrderView,
       },
     ],
     beforeEnter: (to, from, next) => {
