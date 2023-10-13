@@ -14,8 +14,8 @@
         >
           <router-link :to="`/explore/books/${book._id}`">
             <img
-              class="w-36 h-48 object-cover mb-3 rounded-md bg-white"
               src="@/assets/lamgiauquachungkhoan.jpg"
+              class="w-36 h-48 object-cover mb-3 rounded-md bg-white"
               alt=""
             />
           </router-link>

@@ -14,10 +14,32 @@
       </div>
       <div class="search">
         <input
+          @focusout="searchShow = false"
+          @focus="searchShow = true"
+          @keyup="searchInput"
+          v-model="search"
           type="text"
           placeholder="Search"
-          class="outline-none border rounded-md px-6 py-3"
+          class="outline-none border rounded-md px-6 py-3 relative"
         />
+        <div
+          class="search-result border w-[300px] absolute z-10 mt-2 rounded-md px-4 py-2 bg-[#379c7e]"
+          v-if="searchShow && books.length > 0"
+        >
+          <div
+            v-for="book in books"
+            :key="book._id"
+            class="search-result-item rounded-md"
+          >
+            <router-link :to="`/explore/books/${book._id}`">
+              <h1
+                class="text-sm font-bold mb-4 text-[#ebc04a] py-1 hover:text-white transition-all duration-200"
+              >
+                {{ book.title }}
+              </h1>
+            </router-link>
+          </div>
+        </div>
       </div>
       <div class="links space-x-6">
         <router-link to="/explore/cart" class="text-3xl relative">
@@ -31,7 +53,7 @@
           <ion-icon name="person-outline"></ion-icon>
         </router-link>
         <router-link :to="`/explore/order/${userNew._id}`" class="text-3xl">
-          <ion-icon name="wallet-outline">Ư</ion-icon>
+          <ion-icon name="wallet-outline"></ion-icon>
         </router-link>
 
         <router-link to="/" class="text-3xl" @click="logout">
@@ -44,11 +66,32 @@
 </template>
 <script setup>
 import { useStore } from "vuex";
-import { computed } from "vue";
+import { computed, ref } from "vue";
+import api from "@/services/api";
 const store = useStore();
 const logout = () => {
   store.dispatch("auth/logout");
 };
+const books = ref([]);
+const search = ref("");
+const searchShow = ref(false);
+const searchTimeout = ref(null);
+
+const resetSearchTimeout = () => {
+  clearTimeout(searchTimeout.value);
+};
+const searchInput = async () => {
+  if (search.value.trim() === "") {
+    // Nếu ô tìm kiếm trống, không gửi yêu cầu tìm kiếm
+    books.value = [];
+    return;
+  }
+
+  const res = await api.get(`/api/v1/books/search/${search.value}`);
+  books.value = res.data.books;
+  searchShow.value = true; // Hiển thị kết quả tìm kiếm khi có kết quả
+};
+
 const user = computed(() => store.state.auth.account);
 const userNew = JSON.parse(user.value);
 const cart = computed(() => store.state.cart.cart);

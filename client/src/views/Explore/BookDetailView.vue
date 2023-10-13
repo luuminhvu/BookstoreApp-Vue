@@ -63,14 +63,23 @@
   </div>
 </template>
 <script setup>
-import { onMounted, ref, computed } from "vue";
+import { onMounted, ref, computed, watch } from "vue";
 import api from "@/services/api";
 //get params from URL
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 
 const route = useRoute();
-const id = route.params.id;
+let id = route.params.id;
+watch(
+  () => route.params.id,
+  () => {
+    id = route.params.id;
+    if (id) {
+      getBook();
+    }
+  }
+);
 const book = ref([]); // Initialize quantity with a default value of 1
 const quantity = ref(1);
 const store = useStore();
@@ -81,9 +90,10 @@ const getBook = async () => {
 };
 
 onMounted(() => {
-  getBook();
+  if (id) {
+    getBook();
+  }
 });
-const loading = computed(() => store.state.loading);
 
 const addToCart = () => {
   const cartItem = {

@@ -55,10 +55,25 @@ const getBooks = async (req, res) => {
 const getBook = async (req, res) => {
   try {
     const id = req.params.id;
+    if (!id || id === undefined) {
+      return res.status(400).json({ msg: "Not all fields have been entered." });
+    }
     const book = await Book.findById(id);
     res.status(200).json({ book });
-  } catch {
+  } catch (err) {
     res.status(500).json({ msg: err.message });
   }
 };
-module.exports = { addBook, getBooks, getBook };
+const searchBook = async (req, res) => {
+  try {
+    console.log(req.params);
+    const keyword = req.params.title; // Lấy từ khóa tìm kiếm từ req.params.title
+    const regex = new RegExp(keyword, "i"); // Tạo biểu thức chính quy không phân biệt chữ hoa/thường
+    const books = await Book.find({ title: { $regex: regex } });
+    res.status(200).json({ books });
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
+  }
+};
+
+module.exports = { addBook, getBooks, getBook, searchBook };
