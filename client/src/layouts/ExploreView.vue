@@ -12,11 +12,12 @@
           />
         </router-link>
       </div>
+
       <div class="search">
         <input
-          @focusout="searchShow = false"
-          @focus="searchShow = true"
-          @keyup="searchInput"
+          @focusout="hideSearchResults"
+          @focus="showSearchResults"
+          @input="debouncedSearchInput"
           v-model="search"
           type="text"
           placeholder="Search"
@@ -24,21 +25,21 @@
         />
         <div
           class="search-result border w-[300px] absolute z-10 mt-2 rounded-md px-4 py-2 bg-[#379c7e]"
-          v-if="searchShow && books.length > 0"
+          v-show="searchShow && books.length > 0"
         >
-          <div
+          <router-link
             v-for="book in books"
+            :to="`/explore/books/${book._id}`"
             :key="book._id"
-            class="search-result-item rounded-md"
           >
-            <router-link :to="`/explore/books/${book._id}`">
+            <div class="search-result-item rounded-md">
               <h1
                 class="text-sm font-bold mb-4 text-[#ebc04a] py-1 hover:text-white transition-all duration-200"
               >
                 {{ book.title }}
               </h1>
-            </router-link>
-          </div>
+            </div>
+          </router-link>
         </div>
       </div>
       <div class="links space-x-6">
@@ -80,20 +81,39 @@ const searchTimeout = ref(null);
 const resetSearchTimeout = () => {
   clearTimeout(searchTimeout.value);
 };
-const searchInput = async () => {
-  if (search.value.trim() === "") {
-    // Nếu ô tìm kiếm trống, không gửi yêu cầu tìm kiếm
-    books.value = [];
-    return;
-  }
 
-  const res = await api.get(`/api/v1/books/search/${search.value}`);
-  books.value = res.data.books;
-  searchShow.value = true; // Hiển thị kết quả tìm kiếm khi có kết quả
+const debouncedSearchInput = () => {
+  // Clear the previous timeout (if any) to debounce the input
+  resetSearchTimeout();
+
+  // Set a new timeout to delay the search request
+  searchTimeout.value = setTimeout(async () => {
+    if (search.value.trim() === "") {
+      // If the search input is empty, hide the results
+      searchShow.value = false;
+      books.value = [];
+      return;
+    }
+
+    const res = await api.get(`/api/v1/books/search/${search.value}`);
+    books.value = res.data.books;
+    searchShow.value = true; // Show the search results when there are results
+  }, 300); // Adjust the debounce delay as needed
 };
 
 const user = computed(() => store.state.auth.account);
 const userNew = JSON.parse(user.value);
 const cart = computed(() => store.state.cart.cart);
+
+const showSearchResults = () => {
+  if (books.value.length > 0) {
+    searchShow.value = true;
+  }
+};
+
+const hideSearchResults = () => {
+  searchShow.value = false;
+};
 </script>
+
 <style lang=""></style>

@@ -6,7 +6,9 @@
           Welcome to the Bookstore
         </h1>
       </div>
-      <div class="books-list grid grid-cols-3 gap-3">
+      <div
+        class="books-list xl:grid xl:grid-cols-3 xl:gap-4 lg:grid lg:grid-cols-3 lg:gap-4 md:grid md:grid-cols-2 md:gap-4 sm:grid sm:grid-cols-1 sm:gap-4"
+      >
         <div
           v-for="book in books"
           :key="book._id"
