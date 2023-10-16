@@ -137,4 +137,34 @@ const getUser = async (req, res) => {
     return res.status(500).json({ msg: err.message });
   }
 };
-module.exports = { register, login, updateUser, deleteUser, getUser };
+
+const changePassword = async (req, res) => {
+  try {
+    const { id, password, newPassword } = req.body;
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(400).json({ msg: "User does not exist." });
+    }
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ msg: "Invalid credentials" });
+    }
+    const hashedPass = await bcrypt.hash(newPassword, 10);
+    const newUser = await User.findByIdAndUpdate(
+      id,
+      { password: hashedPass },
+      { new: true }
+    );
+    res.status(200).json({ msg: "Password changed", user: newUser });
+  } catch (error) {
+    return res.status(500).json({ msg: error.message });
+  }
+};
+module.exports = {
+  register,
+  login,
+  updateUser,
+  deleteUser,
+  getUser,
+  changePassword,
+};

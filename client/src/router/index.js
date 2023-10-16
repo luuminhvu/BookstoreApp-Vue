@@ -11,6 +11,7 @@ import BookDetailView from "../views/Explore/BookDetailView.vue";
 import CartView from "../views/Explore/CartView.vue";
 import CheckoutView from "../views/Explore/CheckoutView.vue";
 import OrderView from "../views/Explore/OrderView.vue";
+import ChangePasswordView from "../views/Explore/ChangePasswordView.vue";
 
 const routes = [
   {
@@ -77,6 +78,11 @@ const routes = [
         path: "order/:id",
         name: "Order",
         component: OrderView,
+      },
+      {
+        path: "change-password",
+        name: "ChangePassword",
+        component: ChangePasswordView,
       },
     ],
     beforeEnter: (to, from, next) => {

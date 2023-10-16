@@ -78,6 +78,11 @@
         >
           Delete
         </button>
+        <router-link
+          class="btn bg-gray-500 text-white py-2 px-3 rounded-md hover:bg-gray-600 transition-all duration-200"
+          to="/explore/change-password"
+          >Change Password</router-link
+        >
       </div>
     </div>
   </div>
