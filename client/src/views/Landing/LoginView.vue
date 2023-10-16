@@ -1,52 +1,80 @@
 <template lang="">
-  <div class="login flex justify-center items-center min-h-screen text-center">
-    <form class="login-box" @submit="(e) => login(e)">
-      <h1 class="text-sky-500 text-2xl font-bold mb-4">Login</h1>
-      <div
-        class="box shadow text-[#2e9949] bg-white w-80 border-2 space-y-4 flex flex-col p-5 font-bold text-2xl"
+  <div class="login flex flex-col justify-center items-center min-h-screen">
+    <h1 class="text-3xl font-bold text-[#5b95c5]">Login</h1>
+    <a-form
+      :model="formState"
+      name="basic"
+      :label-col="{ span: 8 }"
+      :wrapper-col="{ span: 16 }"
+      autocomplete="off"
+      @finish="onFinish"
+      @finishFailed="onFinishFailed"
+    >
+      <a-form-item
+        label="Username"
+        name="username"
+        :rules="[{ required: true, message: 'Please input your username!' }]"
       >
-        <input
-          v-model="user.username"
-          type="text"
-          placeholder="Username"
-          class="input-field border outline-none px-3 py-2"
-        />
-        <input
-          v-model="user.password"
-          type="password"
-          placeholder="Password"
-          class="input-field border outline-none px-3 py-2"
-        />
-        <button
-          :disabled="loading"
-          class="btn bg-sky-500 text-white py-2 px-3 rounded-md hover:bg-sky-600 transition-all duration-200 disabled:bg-slate-200 disabled:text-slate-500 disabled:cursor-not-allowed"
-          type="submit"
+        <a-input v-model:value="formState.username" />
+      </a-form-item>
+
+      <a-form-item
+        label="Password"
+        name="password"
+        :rules="[{ required: true, message: 'Please input your password!' }]"
+      >
+        <a-input-password v-model:value="formState.password" />
+      </a-form-item>
+
+      <a-form-item name="remember" :wrapper-col="{ offset: 8, span: 16 }">
+        <a-checkbox v-model:checked="formState.remember"
+          >Remember me</a-checkbox
         >
-          Login
-        </button>
-      </div>
-      <p class="text-gray-500 mt-4">
-        Don't have an account?
-        <router-link to="/register">Register</router-link>
-      </p>
-    </form>
+      </a-form-item>
+
+      <a-form-item :wrapper-col="{ offset: 8, span: 16 }">
+        <a-button
+          :loading="loading"
+          @click="login"
+          class="bg-[#1677ff]"
+          type="primary"
+          html-type="submit"
+          >Submit</a-button
+        >
+      </a-form-item>
+    </a-form>
+    <div class="mt-4">
+      <router-link to="/register" class="text-[#131212]">
+        Don't have an account? Register here
+      </router-link>
+    </div>
   </div>
 </template>
 <script setup>
 import { useStore } from "vuex";
 import { reactive, computed } from "vue";
 const store = useStore();
-const user = reactive({
+const formState = reactive({
   username: "",
   password: "",
+  remember: true,
 });
+const onFinish = (values) => {
+  console.log("Success:", values);
+};
+const onFinishFailed = (errorInfo) => {
+  console.log("Failed:", errorInfo);
+};
 const loading = computed(() => {
   return store.state.loading;
 });
 const login = async (e) => {
   e.preventDefault();
-  if (user.username || user.password) {
-    await store.dispatch("auth/login", user);
+  if (formState.username && formState.password) {
+    await store.dispatch("auth/login", {
+      username: formState.username,
+      password: formState.password,
+    });
   } else {
     alert("Please enter a username and password");
   }

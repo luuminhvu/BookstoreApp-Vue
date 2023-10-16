@@ -40,7 +40,6 @@ const addBook = async (req, res) => {
     res.status(200).json({ msg: "Book created", book: savedBook });
   } catch (err) {
     return res.status(500).json({ msg: err.message });
-    console.log(err);
   }
 };
 
