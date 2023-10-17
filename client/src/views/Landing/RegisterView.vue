@@ -1,75 +1,131 @@
 <template lang="">
   <div
-    class="register flex justify-center items-center min-h-screen text-center"
+    class="register flex flex-col justify-center items-center min-h-screen text-center"
   >
-    <form class="register-box" @submit="(e) => register(e)">
-      <h1 class="text-sky-500 text-2xl font-bold mb-4">Register</h1>
-      <div
-        class="box shadow text-[#2e9949] bg-white w-80 border-2 space-y-4 flex flex-col p-5 font-bold text-2xl"
-      >
-        <input
-          v-model="user.fullname"
-          type="text"
-          placeholder="Fullname"
-          class="input-field border outline-none px-2 py-2"
-        />
-        <input
-          v-model="user.username"
-          type="text"
-          placeholder="Username"
-          class="input-field border outline-none px-2 py-2"
-        />
-        <input
-          v-model="user.password"
-          type="password"
-          placeholder="Password"
-          class="input-field border outline-none px-2 py-2"
-        />
-        <select
-          v-model="user.gender"
-          placeholder="Gender"
-          class="input-field border outline"
+    <h3 class="text-3xl font-bold text-[#5b95c5]">Register</h3>
+    <a-form
+      class="mt-4 rounded-md p-4 border border-[#5b95c5] w-[400px]"
+      ref="formRef"
+      :model="formState"
+      :rules="rules"
+      :label-col="labelCol"
+      :wrapper-col="wrapperCol"
+    >
+      <a-form-item ref="fullname" label="Fullname" name="fullname">
+        <a-input v-model:value="formState.fullname" />
+      </a-form-item>
+      <a-form-item ref="username" label="Username" name="username">
+        <a-input v-model:value="formState.username" />
+      </a-form-item>
+      <a-form-item ref="password" label="Password" name="password">
+        <a-input v-model:value="formState.password" />
+      </a-form-item>
+      <a-form-item label="Gender" name="gender">
+        <a-select
+          v-model:value="formState.gender"
+          placeholder="please select your gender"
         >
-          <option selected disabled>Choose Gender</option>
-          <option value="Male">Male</option>
-          <option value="Female">Female</option>
-          <option value="">Don't know</option>
-        </select>
-        <button
-          :disabled="loading"
-          class="btn bg-sky-500 text-white py-2 px-3 rounded-md hover:bg-sky-600 transition-all duration-200 disabled:bg-gray-200 disabled:text-gray-500 disabled:cursor-not-allowed"
-          type="submit"
+          <a-select-option value="Male">Male</a-select-option>
+          <a-select-option value="Femaie">Femaie</a-select-option>
+        </a-select>
+      </a-form-item>
+
+      <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
+        <a-button class="bg-[#1677ff]" type="primary" @click="onSubmit"
+          >Create</a-button
         >
-          Register
-        </button>
+        <a-button style="margin-left: 10px" @click="resetForm">Reset</a-button>
+      </a-form-item>
+      <div class="mt-4">
+        <router-link to="/login" class="text-[#131212]">
+          Already have an account? Login here
+        </router-link>
       </div>
-      <p class="text-gray-500 mt-4">
-        Already have an account?
-        <router-link to="/login">Login</router-link>
-      </p>
-    </form>
+    </a-form>
   </div>
 </template>
 <script setup>
 import { useStore } from "vuex";
-import { reactive, computed } from "vue";
+import { reactive, computed, ref } from "vue";
 const store = useStore();
-const user = reactive({
+const formRef = ref();
+const formState = reactive({
   username: "",
   password: "",
   fullname: "",
   gender: "",
 });
+const labelCol = {
+  span: 9,
+};
+const wrapperCol = {
+  span: 20,
+};
+
+const rules = {
+  fullname: [
+    {
+      required: true,
+      message: "Please input your fullname",
+      trigger: "change",
+    },
+    {
+      min: 3,
+      max: 30,
+      message: "Please input your fullname between 3 to 30 characters",
+      trigger: "blur",
+    },
+  ],
+  username: [
+    {
+      required: true,
+      message: "Please input your username",
+      trigger: "change",
+    },
+    {
+      min: 3,
+      max: 30,
+      message: "Please input your username between 3 to 30 characters",
+      trigger: "blur",
+    },
+  ],
+  password: [
+    {
+      required: true,
+      message: "Please input your password",
+      trigger: "change",
+    },
+    {
+      min: 6,
+      max: 30,
+      message: "Please input your password between 6 to 30 characters",
+      trigger: "blur",
+    },
+  ],
+  gender: [
+    {
+      require: true,
+      message: "Please select your gender",
+      trigger: "change",
+    },
+  ],
+};
 const loading = computed(() => {
   return store.state.loading;
 });
-const register = async (e) => {
-  e.preventDefault();
-  if (user.username || user.password) {
-    await store.dispatch("auth/register", user);
-  } else {
-    alert("Please enter a username and password");
-  }
+const onSubmit = async () => {
+  await store.dispatch("auth/register", formState);
 };
+const resetForm = () => {
+  formRef.value.resetFields();
+};
+// const register = async (e) => {
+//   e.preventDefault();
+//   if (user.username || user.password) {
+//     await store.dispatch("auth/register", user);
+//   } else {
+//     alert("Please enter a username and password");
+//   }
+// };
 </script>
 <style lang=""></style>

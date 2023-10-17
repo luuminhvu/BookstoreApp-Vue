@@ -1,8 +1,8 @@
 <template>
-  <div class="main">
+  <div class="main bg-[#3098aa] h-full w-full">
     <div class="books">
       <div class="books-title justify-center items-center flex flex-col">
-        <h1 class="text-3xl font-bold text-center mb-4 text-[#5b95c5]">
+        <h1 class="text-3xl font-bold text-center mb-4 text-[#813259]">
           Welcome to the Bookstore
         </h1>
       </div>

@@ -8,28 +8,36 @@
           Hello {{ user.fullname }}
         </h1>
       </div>
-      <label for="phone" class="block text-sm font-medium text-gray-700">
+      <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">
         Please enter your phone number
       </label>
-      <input
-        type="text"
-        name="phone"
-        id="phone"
-        autocomplete="given-phone"
-        v-model="newUser.phone"
-        class="mt-2 focus:ring-indigo-500 focus:border-indigo-500 block w-[50%] shadow-sm sm:text-sm rounded-md border-2 mb-2"
-      />
-      <label for="address" class="block text-sm font-medium text-gray-700">
+      <a-input
+        class="mb-2"
+        v-model:value="newUser.phone"
+        placeholder="Phone Number"
+      >
+        <template #prefix>
+          <PhoneOutlined />
+        </template>
+        <template #suffix>
+          <a-tooltip title="Extra information">
+            <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+          </a-tooltip>
+        </template>
+      </a-input>
+      <label for="address" class="block text-sm font-medium text-gray-700 mb-2">
         Please enter your address to receive the book
       </label>
-      <input
-        type="text"
-        name="address"
-        id="address"
-        autocomplete="given-address"
-        v-model="newUser.city"
-        class="mt-2 border-2 focus:ring-indigo-500 focus:border-indigo-500 block w-[50%] shadow-sm sm:text-sm rounded-md mb-2"
-      />
+      <a-input v-model:value="newUser.city" placeholder="Address Shipping">
+        <template #prefix>
+          <ShoppingOutlined />
+        </template>
+        <template #suffix>
+          <a-tooltip title="Extra information">
+            <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
+          </a-tooltip>
+        </template>
+      </a-input>
     </div>
     <div
       class="order-books w-[75%] m-auto border border-teal-700 p-4 mt-3 mb-3"
@@ -74,6 +82,11 @@
 <script setup>
 import { useStore } from "vuex";
 import { computed, ref } from "vue";
+import {
+  PhoneOutlined,
+  ShoppingOutlined,
+  InfoCircleOutlined,
+} from "@ant-design/icons-vue";
 import PayButton from "@/components/PayButton.vue";
 const store = useStore();
 const userN = computed(() => store.state.auth.account);

@@ -2,6 +2,7 @@
   <div class="login flex flex-col justify-center items-center min-h-screen">
     <h1 class="text-3xl font-bold text-[#5b95c5]">Login</h1>
     <a-form
+      class="mt-4 rounded-md p-4 border border-[#5b95c5] w-[400px]"
       :model="formState"
       name="basic"
       :label-col="{ span: 8 }"

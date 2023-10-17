@@ -36,7 +36,7 @@ const pay = async () => {
     //xoa localstorage
     localStorage.removeItem("cart");
     setTimeout(() => {
-      window.location.href = "/explore/order/" + res.data.order.userId;
+      window.location.href = "/explore/checkout-success";
     }, 3000);
   } catch (err) {
     console.log(err);

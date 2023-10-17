@@ -3,7 +3,7 @@
     <nav
       class="navbar sticky top-0 left-0 bg-white p-4 flex flex-row items-center justify-between border-b-2 border-gray-200"
     >
-      <div class="logo">
+      <div class="logo sm:hidden md:hidden lg:block xl:block">
         <router-link to="/explore" class="text-3xl">
           <img
             class="w-36 h-16 object-cover"
@@ -14,14 +14,14 @@
       </div>
 
       <div class="search">
-        <input
+        <a-input-search
+          v-model:value="search"
           @focusout="hideSearchResults"
           @focus="showSearchResults"
           @input="debouncedSearchInput"
-          v-model="search"
-          type="text"
-          placeholder="Search"
-          class="outline-none border rounded-md px-6 py-3 relative"
+          loading
+          placeholder="Search books"
+          class="relative rounded-md border border-[#379c7e] text-white"
         />
         <div
           class="search-result border w-[300px] absolute z-10 mt-2 rounded-md px-4 py-2 bg-[#379c7e]"
