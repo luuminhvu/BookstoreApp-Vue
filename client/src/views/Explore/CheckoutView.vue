@@ -1,80 +1,147 @@
 <template>
-  <div class="order-info grid grid-cols-2 gap-4">
-    <div
-      class="order-info__customer w-[50%] m-auto border border-teal-700 p-4 mt-3 mb-3 h-60"
-    >
-      <div class="">
-        <h1 class="text-3xl font-bold mb-4 text-[#5b95c5] text-center">
-          Hello {{ user.fullname }}
-        </h1>
-      </div>
-      <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">
-        Please enter your phone number
-      </label>
-      <a-input
-        class="mb-2"
-        v-model:value="newUser.phone"
-        placeholder="Phone Number"
+  <div class="h-screen grid grid-cols-3">
+    <div class="lg:col-span-2 col-span-3 bg-indigo-50 space-y-8 px-12">
+      <div
+        class="mt-8 p-4 relative flex flex-col sm:flex-row sm:items-center bg-white shadow rounded-md"
       >
-        <template #prefix>
-          <PhoneOutlined />
-        </template>
-        <template #suffix>
-          <a-tooltip title="Extra information">
-            <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
-          </a-tooltip>
-        </template>
-      </a-input>
-      <label for="address" class="block text-sm font-medium text-gray-700 mb-2">
-        Please enter your address to receive the book
-      </label>
-      <a-input v-model:value="newUser.city" placeholder="Address Shipping">
-        <template #prefix>
-          <ShoppingOutlined />
-        </template>
-        <template #suffix>
-          <a-tooltip title="Extra information">
-            <info-circle-outlined style="color: rgba(0, 0, 0, 0.45)" />
-          </a-tooltip>
-        </template>
-      </a-input>
+        <div
+          class="flex flex-row items-center border-b sm:border-b-0 w-full sm:w-auto pb-4 sm:pb-0"
+        >
+          <div class="text-yellow-500">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-6 sm:w-5 h-6 sm:h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </div>
+          <div class="text-sm font-medium ml-3">Checkout</div>
+        </div>
+        <div class="text-sm tracking-wide text-gray-500 mt-4 sm:mt-0 sm:ml-4">
+          Complete your shipping and payment details below.
+        </div>
+        <div
+          class="absolute sm:relative sm:top-auto sm:right-auto ml-auto right-4 top-4 text-gray-400 hover:text-gray-800 cursor-pointer"
+        >
+          <svg
+            class="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            ></path>
+          </svg>
+        </div>
+      </div>
+      <div class="rounded-md">
+        <form id="payment-form" method="POST" action="">
+          <section>
+            <h2
+              class="uppercase tracking-wide text-lg font-semibold text-gray-700 my-2"
+            >
+              Shipping & Billing Information
+            </h2>
+            <fieldset class="mb-3 bg-white shadow-lg rounded text-gray-600">
+              <label
+                class="flex border-b border-gray-200 h-12 py-3 items-center"
+              >
+                <span class="text-right px-2">Phone</span>
+                <input
+                  v-model="newUser.phone"
+                  name="phone"
+                  type="number"
+                  class="focus:outline-none px-3"
+                  placeholder="try@example.com"
+                  required=""
+                />
+              </label>
+              <label
+                class="flex border-b border-gray-200 h-12 py-3 items-center"
+              >
+                <span class="text-right px-2">Address</span>
+                <input
+                  v-model="newUser.city"
+                  name="address"
+                  class="focus:outline-none px-3"
+                  placeholder="10 Street XYZ 654"
+                />
+              </label>
+            </fieldset>
+          </section>
+        </form>
+      </div>
+      <PayButton
+        :cartItems="cartItems"
+        class="submit-button px-4 py-3 rounded-full bg-pink-400 text-white focus:ring focus:outline-none w-full text-xl font-semibold transition-colors"
+      >
+        Pay {{ total }} VNĐ
+      </PayButton>
     </div>
-    <div
-      class="order-books w-[75%] m-auto border border-teal-700 p-4 mt-3 mb-3"
-    >
-      <h1 class="text-3xl font-bold mb-4 text-[#5b95c5] text-center">
-        Your order
-      </h1>
-      <div
-        class="order-books__table grid grid-cols-4 gap-4 font-bold text-xl text-center border-b-2 border-gray-200 pb-4"
-      >
-        <h3 class="text-lg font-bold mb-4 text-purple-600">Product</h3>
-        <h3 class="text-lg font-bold mb-4 text-yellow-600">Price</h3>
-        <h3 class="text-lg font-bold mb-4 text-yellow-600">Quantity</h3>
-        <h3 class="text-lg font-bold mb-4 text-yellow-600">Total</h3>
+    <div class="col-span-1 bg-white lg:block hidden">
+      <h1 class="py-6 border-b-2 text-xl text-gray-600 px-8">Order Summary</h1>
+      <ul class="py-6 border-b space-y-6 px-8">
+        <li
+          v-for="item in cart"
+          :key="item._id"
+          class="grid grid-cols-6 gap-2 border-b-1"
+        >
+          <div class="col-span-1 self-center">
+            <img
+              src="@/assets/phuongphapthugian.png"
+              alt="Product"
+              class="rounded w-full"
+            />
+          </div>
+          <div class="flex flex-col col-span-3 pt-2">
+            <span class="text-gray-600 text-md font-semi-bold">
+              {{ item.title }}
+            </span>
+            <span class="text-gray-400 text-sm inline-block pt-2"
+              >{{ item.price }} VNĐ
+            </span>
+          </div>
+          <div class="col-span-2 pt-3">
+            <div class="flex items-center space-x-2 text-sm justify-between">
+              <span class="text-gray-400">
+                {{ item.quantity }} x {{ item.price }}
+              </span>
+              <span class="text-pink-400 font-semibold inline-block">
+                {{ item.price * item.quantity }} VNĐ
+              </span>
+            </div>
+          </div>
+        </li>
+      </ul>
+      <div class="px-8 border-b">
+        <div class="flex justify-between py-4 text-gray-600">
+          <span>Subtotal</span>
+          <span class="font-semibold text-pink-500"> {{ total }} VNĐ </span>
+        </div>
+        <div class="flex justify-between py-4 text-gray-600">
+          <span>Shipping</span>
+          <span class="font-semibold text-pink-500">Free</span>
+        </div>
       </div>
       <div
-        v-for="item in cart"
-        :key="item._id"
-        class="order-books__item grid grid-cols-4 gap-4 font-bold text-center my-4 text-[#143614] border-b-2 border-gray-200 pb-4"
+        class="font-semibold text-xl px-8 flex justify-between py-8 text-gray-600"
       >
-        <div class="order-books__item-name">
-          <h3>{{ item.title }}</h3>
-        </div>
-        <div class="order-books__item-price">
-          <h3>{{ item.price }}</h3>
-        </div>
-        <div class="order-books__item-quantity">
-          <h3>{{ item.quantity }}</h3>
-        </div>
-        <div class="order-books__item-total">
-          <h3>{{ item.price * item.quantity }} VNĐ</h3>
-        </div>
+        <span>Total</span>
+        <span> {{ total }} VNĐ </span>
       </div>
-      <div class="flex font-bold text-xl text-[#5b95c5] float-right">
-        Total : {{ total }} VNĐ
-      </div>
-      <PayButton :cartItems="cartItems" />
     </div>
   </div>
 </template>

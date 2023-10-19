@@ -1,5 +1,5 @@
 <template>
-  <div class="parent">
+  <div class="parent bg-[#f8ecd1] h-full w-full">
     <TheLoading v-show="loading" />
     <TheToast v-show="toastShow" />
     <router-view />
