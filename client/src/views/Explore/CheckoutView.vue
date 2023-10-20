@@ -65,8 +65,8 @@
                   name="phone"
                   type="number"
                   class="focus:outline-none px-3"
-                  placeholder="try@example.com"
-                  required=""
+                  placeholder="0123456789"
+                  required
                 />
               </label>
               <label
@@ -78,6 +78,7 @@
                   name="address"
                   class="focus:outline-none px-3"
                   placeholder="10 Street XYZ 654"
+                  required
                 />
               </label>
             </fieldset>
@@ -85,6 +86,7 @@
         </form>
       </div>
       <PayButton
+        v-if="validateForm()"
         :cartItems="cartItems"
         class="submit-button px-4 py-3 rounded-full bg-pink-400 text-white focus:ring focus:outline-none w-full text-xl font-semibold transition-colors"
       >
@@ -148,12 +150,7 @@
 
 <script setup>
 import { useStore } from "vuex";
-import { computed, ref } from "vue";
-import {
-  PhoneOutlined,
-  ShoppingOutlined,
-  InfoCircleOutlined,
-} from "@ant-design/icons-vue";
+import { computed, ref, watch } from "vue";
 import PayButton from "@/components/PayButton.vue";
 const store = useStore();
 const userN = computed(() => store.state.auth.account);
@@ -169,6 +166,36 @@ const newUser = ref({
   phone: "",
   city: "",
 });
+
+watch(
+  () => userN.value,
+  () => {
+    if (userN.value) {
+      newUser.value.phone = user.phone;
+      newUser.value.city = user.city;
+    }
+  }
+);
+
+const validateForm = () => {
+  if (validatePhone() && validateCity()) {
+    return true;
+  }
+  return false;
+};
+const validateCity = () => {
+  if (newUser.value.city.length < 9) {
+    return false;
+  }
+  return true;
+};
+const validatePhone = () => {
+  if (newUser.value.phone.length < 9) {
+    return false;
+  }
+  return true;
+};
+
 const cartItems = computed(() => ({
   userId: user._id,
   items: cart.value,
