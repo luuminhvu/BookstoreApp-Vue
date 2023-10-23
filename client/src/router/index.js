@@ -13,6 +13,9 @@ import CheckoutView from "../views/Explore/CheckoutView.vue";
 import OrderView from "../views/Explore/OrderView.vue";
 import ChangePasswordView from "../views/Explore/ChangePasswordView.vue";
 import CheckoutSuccessView from "../views/Explore/CheckoutSuccessView.vue";
+import AdminView from "../layouts/AdminView.vue";
+import DashboardView from "../views/Admin/DashboardView.vue";
+import BooksView from "../views/Admin/BooksView.vue";
 
 const routes = [
   {
@@ -99,6 +102,23 @@ const routes = [
         next("/");
       }
     },
+  },
+  {
+    path: "/admin",
+    name: "Admin",
+    component: AdminView,
+    children: [
+      {
+        path: "",
+        name: "Dashboard",
+        component: DashboardView,
+      },
+      {
+        path: "books",
+        name: "Books",
+        component: BooksView,
+      },
+    ],
   },
 ];
 

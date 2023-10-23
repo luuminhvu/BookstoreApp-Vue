@@ -5,8 +5,9 @@ const {
   deleteUser,
   getUser,
   changePassword,
+  getUsers,
 } = require("../controllers/UserController");
-
+router.get("/", getUsers);
 router.get("/:id", getUser);
 router.put("/:id", updateUser);
 router.delete("/:id", deleteUser);

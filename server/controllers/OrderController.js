@@ -47,5 +47,31 @@ const deleteOrder = async (req, res) => {
     return res.status(500).json({ msg: err.message });
   }
 };
+const getOrders = async (req, res) => {
+  try {
+    const orders = await Order.find();
+    res.status(200).json(orders);
+  } catch (error) {
+    res.status(500).json({ msg: error.message });
+  }
+};
+const getTotalRevenue = async (req, res) => {
+  try {
+    const orders = await Order.find();
+    let total = 0;
+    orders.forEach((order) => {
+      total += order.totalAmount;
+    });
+    res.status(200).json({ total });
+  } catch (error) {
+    res.status(500).json({ msg: error.message });
+  }
+};
 
-module.exports = { createOrder, getOrder, deleteOrder };
+module.exports = {
+  createOrder,
+  getOrder,
+  deleteOrder,
+  getOrders,
+  getTotalRevenue,
+};

@@ -160,6 +160,14 @@ const changePassword = async (req, res) => {
     return res.status(500).json({ msg: error.message });
   }
 };
+const getUsers = async (req, res) => {
+  try {
+    const users = await User.find();
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ msg: error.message });
+  }
+};
 module.exports = {
   register,
   login,
@@ -167,4 +175,5 @@ module.exports = {
   deleteUser,
   getUser,
   changePassword,
+  getUsers,
 };

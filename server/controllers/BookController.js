@@ -74,5 +74,28 @@ const searchBook = async (req, res) => {
     res.status(500).json({ msg: err.message });
   }
 };
+const updateBook = async (req, res) => {
+  try {
+    const bookId = req.params.id;
+    const updatedData = req.body; // Assuming that req.body contains the updated book data
+    console.log(updatedData);
+    console.log(bookId);
+    // Check if a 'updatedAt' field exists in your schema and set it to the current date.
+    updatedData.updatedAt = new Date();
 
-module.exports = { addBook, getBooks, getBook, searchBook };
+    const newBook = await Book.findByIdAndUpdate(bookId, updatedData, {
+      new: true,
+    });
+
+    if (!newBook) {
+      return res.status(404).json({ msg: "Book not found" });
+    }
+
+    res.status(200).json({ msg: "Book updated", book: newBook });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ msg: error.message });
+  }
+};
+
+module.exports = { addBook, getBooks, getBook, searchBook, updateBook };
