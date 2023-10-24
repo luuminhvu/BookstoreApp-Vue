@@ -20,6 +20,7 @@
             />
           </svg>
           <input
+            @input="search"
             class="bg-gray-50 outline-none ml-1 block"
             type="text"
             name=""
@@ -34,6 +35,7 @@
             New Report
           </button>
           <button
+            @click="showModal1"
             class="bg-indigo-600 px-4 py-2 rounded-md text-white font-semibold tracking-wide cursor-pointer"
           >
             Create
@@ -119,6 +121,7 @@
                     <span class="relative">Edit</span>
                   </button>
                   <button
+                    @click="showModal2(book._id)"
                     class="relative inline-block px-3 py-1 ml-2 font-semibold text-green-900 leading-tight"
                   >
                     <span
@@ -191,12 +194,75 @@
           <a-input-number v-model:value="formState.book.price" />
         </a-form-item>
         <a-form-item :name="['book', 'images']" label="Images">
-          <a-input type="file" v-model="formState.book.image" />
+          <a-input
+            type="file"
+            v-model="formState.book.image"
+            name="image"
+            @change="onFileChange"
+          />
         </a-form-item>
         <a-form-item :name="['book', 'description']" label="Description">
           <a-textarea v-model:value="formState.book.desc" />
         </a-form-item>
       </a-form>
+    </a-modal>
+  </div>
+  <div>
+    <a-modal
+      v-model:open="create"
+      title="Create Book"
+      :confirm-loading="confirmLoading"
+      @ok="handleOk1"
+    >
+      <a-form
+        :model="formState"
+        v-bind="layout"
+        name="nest-messages"
+        :validate-messages="validateMessages"
+        @finish="onFinish"
+      >
+        <a-form-item
+          :name="['book', 'title']"
+          label="Title"
+          :rules="[{ required: true }]"
+        >
+          <a-input v-model:value="formState.book.title" />
+        </a-form-item>
+        <a-form-item
+          :name="['book', 'category']"
+          label="Category"
+          :rules="[{ required: true }]"
+        >
+          <a-input v-model:value="formState.book.category" />
+        </a-form-item>
+        <a-form-item
+          :name="['book', 'price']"
+          label="Price"
+          :rules="[{ type: 'number', min: 0 }]"
+        >
+          <a-input-number v-model:value="formState.book.price" />
+        </a-form-item>
+        <a-form-item :name="['book', 'images']" label="Images">
+          <a-input
+            type="file"
+            v-model="formState.book.image"
+            name="image"
+            @change="onFileChange"
+          />
+        </a-form-item>
+        <a-form-item :name="['book', 'description']" label="Description">
+          <a-textarea v-model:value="formState.book.desc" />
+        </a-form-item>
+      </a-form>
+    </a-modal>
+  </div>
+  <div>
+    <a-modal
+      v-model:open="isDelete"
+      title="Do you want to delete this book?"
+      :confirm-loading="confirmLoading"
+      @ok="handleDelete"
+    >
     </a-modal>
   </div>
 </template>
@@ -207,12 +273,30 @@ import * as moment from "moment";
 import api from "@/services/api";
 const store = useStore();
 const open = ref(false);
+const create = ref(false);
+const isDelete = ref(false);
 const confirmLoading = ref(false);
 const showModal = (_id) => {
   open.value = true;
   const book = books.value.find((book) => book._id === _id);
   formState.book = book;
   console.log(book);
+};
+const showModal1 = () => {
+  create.value = true;
+  //xoa du lieu cu
+  formState.book = {
+    title: "",
+    category: "",
+    price: "",
+    image: "",
+    desc: "",
+  };
+};
+const showModal2 = (_id) => {
+  isDelete.value = true;
+  const book = books.value.find((book) => book._id === _id);
+  formState.book = book;
 };
 const formState = reactive({
   book: {
@@ -223,6 +307,13 @@ const formState = reactive({
     desc: "",
   },
 });
+const onFileChange = (e) => {
+  const file = e.target.files[0];
+  // Lấy tên tệp (tên ảnh) từ tệp đã chọn
+  const fileName = file.name;
+  formState.book.image = fileName;
+};
+
 console.log(formState);
 const handleOk = async () => {
   try {
@@ -246,7 +337,59 @@ const handleOk = async () => {
     confirmLoading.value = false;
     store.commit("setToast", {
       show: true,
-      message: error.response.data.message,
+      message: error.response.data.msg,
+      type: "error",
+    });
+  }
+};
+const handleOk1 = async () => {
+  try {
+    confirmLoading.value = true;
+    const res = await api.post(`/api/v1/books/add`, {
+      book: formState.book,
+    });
+    confirmLoading.value = false;
+    create.value = false;
+    store.commit("setToast", {
+      show: true,
+      message: res.data.msg,
+      type: "success",
+    });
+    books.values = res.data.newBook;
+    setTimeout(() => {
+      window.location.reload();
+    }, 3000);
+  } catch (error) {
+    console.log(error);
+    confirmLoading.value = false;
+    store.commit("setToast", {
+      show: true,
+      message: error.response.data.msg,
+      type: "error",
+    });
+  }
+};
+const handleDelete = async () => {
+  try {
+    confirmLoading.value = true;
+    const res = await api.delete(`/api/v1/books/${formState.book._id}`);
+    confirmLoading.value = false;
+    isDelete.value = false;
+    store.commit("setToast", {
+      show: true,
+      message: res.data.msg,
+      type: "success",
+    });
+    books.values = res.data.newBook;
+    setTimeout(() => {
+      window.location.reload();
+    }, 3000);
+  } catch (error) {
+    console.log(error);
+    confirmLoading.value = false;
+    store.commit("setToast", {
+      show: true,
+      message: error.response.data.msg,
       type: "error",
     });
   }
@@ -265,6 +408,15 @@ const validateMessages = {
     email: "${label} is not a valid email!",
     number: "${label} is not a valid number!",
   },
+};
+const search = async (e) => {
+  const value = e.target.value;
+  if (value) {
+    const res = await api.get(`/api/v1/books/search/${value}`);
+    books.value = res.data.books;
+  } else {
+    getBooks();
+  }
 };
 
 const onFinish = (values) => {

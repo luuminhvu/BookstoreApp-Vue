@@ -3,7 +3,7 @@ const Book = require("../models/Book.js");
 const addBook = async (req, res) => {
   try {
     console.log(req.body);
-    const { title, category, price, image, desc } = req.body;
+    const { title, category, price, image, desc } = req.body.book;
 
     // Check if both title and category are provided
     if (!title || !category) {
@@ -18,7 +18,7 @@ const addBook = async (req, res) => {
     }
 
     // Check category length
-    if (category.trim().length < 4 || category.trim().length > 20) {
+    if (category.trim().length < 4 || category.trim().length > 100) {
       return res.status(400).json({
         msg: "Category must be between 4 and 20 characters long",
       });
@@ -65,7 +65,6 @@ const getBook = async (req, res) => {
 };
 const searchBook = async (req, res) => {
   try {
-    console.log(req.params);
     const keyword = req.params.title; // Lấy từ khóa tìm kiếm từ req.params.title
     const regex = new RegExp(keyword, "i"); // Tạo biểu thức chính quy không phân biệt chữ hoa/thường
     const books = await Book.find({ title: { $regex: regex } });
@@ -77,7 +76,7 @@ const searchBook = async (req, res) => {
 const updateBook = async (req, res) => {
   try {
     const bookId = req.params.id;
-    const updatedData = req.body; // Assuming that req.body contains the updated book data
+    const updatedData = req.body.book; // Assuming that req.body contains the updated book data
     console.log(updatedData);
     console.log(bookId);
     // Check if a 'updatedAt' field exists in your schema and set it to the current date.
@@ -97,5 +96,24 @@ const updateBook = async (req, res) => {
     res.status(500).json({ msg: error.message });
   }
 };
+const deleteBook = async (req, res) => {
+  const bookId = req.params.id;
+  try {
+    const deletedBook = await Book.findByIdAndDelete(bookId);
+    if (!deletedBook) {
+      return res.status(404).json({ msg: "Book not found" });
+    }
+    res.status(200).json({ msg: "Book deleted", book: deletedBook });
+  } catch (error) {
+    res.status(500).json({ msg: error.message });
+  }
+};
 
-module.exports = { addBook, getBooks, getBook, searchBook, updateBook };
+module.exports = {
+  addBook,
+  getBooks,
+  getBook,
+  searchBook,
+  updateBook,
+  deleteBook,
+};

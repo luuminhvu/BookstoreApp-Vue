@@ -16,6 +16,8 @@ import CheckoutSuccessView from "../views/Explore/CheckoutSuccessView.vue";
 import AdminView from "../layouts/AdminView.vue";
 import DashboardView from "../views/Admin/DashboardView.vue";
 import BooksView from "../views/Admin/BooksView.vue";
+import UsersView from "../views/Admin/UsersView.vue";
+import OrdersView from "../views/Admin/OrdersView.vue";
 
 const routes = [
   {
@@ -118,6 +120,16 @@ const routes = [
         name: "Books",
         component: BooksView,
       },
+      {
+        path: "users",
+        name: "Users",
+        component: UsersView,
+      },
+      {
+        path: "orders",
+        name: "Orders",
+        component: OrdersView,
+      },
     ],
   },
 ];
@@ -125,6 +137,7 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+  linkExactActiveClass: "active",
 });
 
 export default router;

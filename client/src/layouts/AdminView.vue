@@ -9,7 +9,7 @@
           <div class="" style="font-size: 14px">
             <router-link
               to="/admin/"
-              class="h-12 px-4 py-3 text-purple-800 tracking-wider block bg-white font-medium border-b-2 border-purple-800 hover:text-purple-800 hover:bg-white"
+              class="nav-link h-12 px-4 py-3 text-white tracking-wider block bg-purple-600 font-thin border-b-2 border-purple-800 hover:text-purple-800 hover:bg-white"
               >Dashboard</router-link
             >
             <router-link
@@ -17,15 +17,15 @@
               class="h-12 px-4 py-3 text-white tracking-wider block bg-purple-600 font-thin border-b-2 border-purple-800 hover:text-purple-800 hover:bg-white"
               >Books</router-link
             >
-            <a
-              href=""
+            <router-link
+              to="/admin/users"
               class="h-12 px-4 py-3 text-white tracking-wider block bg-purple-600 font-thin border-b-2 border-purple-800 hover:text-purple-800 hover:bg-white"
-              >Users</a
+              >Users</router-link
             >
-            <a
-              href=""
+            <router-link
+              to="/admin/orders"
               class="h-12 px-4 py-3 text-white tracking-wider block bg-purple-600 font-thin border-b-2 border-purple-800 hover:text-purple-800 hover:bg-white"
-              >Orders</a
+              >Orders</router-link
             >
           </div>
         </div>
@@ -115,5 +115,10 @@ export default { components: { router } };
 .sidebar li:hover a i,
 .sidebar li:hover a span {
   color: white;
+}
+a.active {
+  background-color: white;
+  color: rgb(126 34 206 / var(--tw-bg-opacity));
+  font-weight: 700;
 }
 </style>
