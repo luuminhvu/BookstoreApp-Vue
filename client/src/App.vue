@@ -10,6 +10,12 @@ import TheLoading from "./components/TheLoading.vue";
 import TheToast from "./components/TheToast.vue";
 import { useStore } from "vuex";
 import { computed } from "vue";
+import * as dayjs from "dayjs";
+import * as isLeapYear from "dayjs/plugin/isLeapYear"; // import plugin
+import "dayjs/locale/zh-cn"; // import locale
+
+dayjs.extend(isLeapYear); // use plugin
+dayjs.locale("zh-cn");
 const store = useStore();
 const loading = computed(() => {
   return store.state.loading;

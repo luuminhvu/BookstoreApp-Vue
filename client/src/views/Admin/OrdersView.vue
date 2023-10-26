@@ -55,6 +55,11 @@
                 <th
                   class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
                 >
+                  User
+                </th>
+                <th
+                  class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider"
+                >
                   Phone
                 </th>
                 <th
@@ -90,7 +95,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="order in orders" :key="order._id">
+              <tr v-for="order in orders" :key="order.order._id">
                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                   <div class="flex items-center">
                     <div class="flex-shrink-0 w-10 h-10">
@@ -102,8 +107,8 @@
                     </div>
                     <div class="ml-3">
                       <p
-                        v-for="book in order.books"
-                        :key="book._id"
+                        v-for="book in order.order.books"
+                        :key="book.id"
                         class="text-gray-900 whitespace-no-wrap"
                       >
                         {{ book.title }} : QTY {{ book.quantity }}
@@ -113,35 +118,42 @@
                 </td>
                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                   <p class="text-gray-900 whitespace-no-wrap">
-                    {{ order.phone }}
+                    {{ order.fullname }}
                   </p>
                 </td>
                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                   <p class="text-gray-900 whitespace-no-wrap">
-                    {{ order.status }}
+                    {{ order.order.phone }}
                   </p>
                 </td>
                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                   <p class="text-gray-900 whitespace-no-wrap">
-                    {{ order.address }}
+                    {{ order.order.status }}
                   </p>
                 </td>
                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                   <p class="text-gray-900 whitespace-no-wrap">
-                    {{ order.totalAmount }}
+                    {{ order.order.address }}
+                  </p>
+                </td>
+                <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                  <p class="text-gray-900 whitespace-no-wrap">
+                    {{ order.order.totalAmount }}
                   </p>
                 </td>
                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                   <p class="text-gray-900 whitespace-no-wrap">
                     {{
-                      moment(order.dateOrdered).format("hh:mm:ss a DD/MM/YYYY")
+                      moment(order.order.dateOrdered).format(
+                        "hh:mm:ss a DD/MM/YYYY"
+                      )
                     }}
                   </p>
                 </td>
                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                   <p class="text-gray-900 whitespace-no-wrap">
                     {{
-                      moment(order.dateDelivered).format(
+                      moment(order.order.dateDelivered).format(
                         "hh:mm:ss a DD/MM/YYYY"
                       )
                     }}
@@ -158,7 +170,7 @@
                     <span class="relative">Delete</span>
                   </span>
                   <span
-                    @click="showModal(order._id)"
+                    @click="showModal(order.order._id)"
                     class="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight mt-2"
                   >
                     <span
@@ -220,7 +232,9 @@
             <a-select-option value="delivered">Delivered</a-select-option>
           </a-select>
         </a-form-item>
-        <a-form-item label="Shipping Date" required name="date1"> </a-form-item>
+        <a-form-item label="Shipping Date" required name="orderDelivered">
+          <input type="datetime-local" v-model="formState.orderDelivered" />
+        </a-form-item>
       </a-form>
     </a-modal>
   </div>
@@ -236,27 +250,40 @@ const open = ref(false);
 const confirmLoading = ref(false);
 const showModal = (_id) => {
   open.value = true;
-  const order = orders.value.find((order) => order._id === _id);
-  if (order.dateDelivered instanceof Date) {
-    formState.orderDelivered = order.dateDelivered;
-  } else {
-    // Nếu không phải, chuyển đổi nó thành một đối tượng Date
-    formState.orderDelivered = new Date(order.dateDelivered);
-  }
-
-  formState.status = order.status;
+  const order = orders.value.find((order) => order.order._id === _id);
+  formState._id = order.order._id;
+  formState.orderDelivered = moment(order.order.dateDelivered).format(
+    "YYYY-MM-DDTHH:mm"
+  );
+  formState.status = order.order.status;
 };
 const formState = reactive({
   status: "",
   orderDelivered: "",
 });
-
+const handleOk = async () => {
+  try {
+    confirmLoading.value = true;
+    alert(formState.orderDelivered);
+    const res = await api.put(`/api/v1/orders/${formState._id}`, {
+      status: formState.status,
+      dateDelivered: formState.orderDelivered,
+    });
+    getOrders();
+    confirmLoading.value = false;
+    open.value = false;
+  } catch (error) {
+    console.log(error);
+    confirmLoading.value = false;
+  }
+};
 const getOrders = async () => {
   try {
     store.commit("setLoading", true, { root: true });
     const res = await api.get("/api/v1/orders");
     orders.value = res.data;
     store.commit("setLoading", false, { root: true });
+    console.log(orders.value);
   } catch (error) {
     console.log(error);
     store.commit("setLoading", false, { root: true });

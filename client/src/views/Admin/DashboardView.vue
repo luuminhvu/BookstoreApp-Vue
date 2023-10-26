@@ -221,53 +221,8 @@
       </div>
     </div>
 
-    <div class="mt-8 px-4 bg-zinc-950 rounded-lg shadow-lg">
-      <hr />
-
-      <h2 class="text-lg font-semibold p-2 dark:text-gray-50">User Section</h2>
-      <h4 class="text-base text-gray-500 p-1 dark:text-gray-200">
-        This Section Show Your User Information
-      </h4>
-      <p class="p-2 dark:text-gray-100">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis optio
-        nobis voluptas? Fugit maiores repellat aut commodi in. Nobis officiis
-        blanditiis sequi iste molestias pariatur ut nam corrupti provident
-        distinctio consequatur iure enim praesentium necessitatibus aliquid,
-        numquam exercitationem error fuga tempora, voluptatum omnis eveniet
-        harum fugit aut? Tempore, ea. Nisi.
-      </p>
-      <p class="p-2 dark:text-gray-100">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum
-        similique mollitia voluptas deserunt autem debitis repudiandae nulla, id
-        harum distinctio numquam quod quibusdam. Dolorem ex iste accusantium
-        doloribus culpa tempore fugiat commodi expedita, doloremque sed facere
-        magni et totam unde ipsa fugit repudiandae eos quo cupiditate. Aliquid
-        vero debitis recusandae!
-      </p>
-      <p class="p-2 dark:text-gray-100">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum
-        similique mollitia voluptas deserunt autem debitis repudiandae nulla, id
-        harum distinctio numquam quod quibusdam. Dolorem ex iste accusantium
-        doloribus culpa tempore fugiat commodi expedita, doloremque sed facere
-        magni et totam unde ipsa fugit repudiandae eos quo cupiditate. Aliquid
-        vero debitis recusandae!
-      </p>
-      <p class="p-2 dark:text-gray-100">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum
-        similique mollitia voluptas deserunt autem debitis repudiandae nulla, id
-        harum distinctio numquam quod quibusdam. Dolorem ex iste accusantium
-        doloribus culpa tempore fugiat commodi expedita, doloremque sed facere
-        magni et totam unde ipsa fugit repudiandae eos quo cupiditate. Aliquid
-        vero debitis recusandae!
-      </p>
-      <p class="p-2 dark:text-gray-100">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum
-        similique mollitia voluptas deserunt autem debitis repudiandae nulla, id
-        harum distinctio numquam quod quibusdam. Dolorem ex iste accusantium
-        doloribus culpa tempore fugiat commodi expedita, doloremque sed facere
-        magni et totam unde ipsa fugit repudiandae eos quo cupiditate. Aliquid
-        vero debitis recusandae!
-      </p>
+    <div class="mt-8 px-4 bg-white rounded-lg shadow-lg">
+      <Line :data="data" :options="options" />
     </div>
 
     <footer
@@ -287,12 +242,42 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
 import { useStore } from "vuex";
-import { computed, onMounted } from "vue";
+import { computed, onMounted, ref } from "vue";
 import api from "@/services/api";
 import * as moment from "moment";
-``;
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
+import { Line } from "vue-chartjs";
+
+const newData = ref([]);
+const compare = (a, b) => {
+  if (a._id < b._id) {
+    return 1;
+  }
+  if (a._id > b._id) {
+    return -1;
+  }
+  return 0;
+};
+
 const store = useStore();
 const loading = computed(() => {
   return store.state.loading;
@@ -303,6 +288,7 @@ const toastShow = computed(() => {
 const orders = ref([]);
 const books = ref([]);
 const users = ref([]);
+
 const getOrders = async () => {
   store.commit("setLoading", true, { root: true });
   try {
@@ -351,17 +337,50 @@ const getUsers = async () => {
     });
   }
 };
+
+const getRevenueLast7Days = async () => {
+  try {
+    const res = await api.get("/api/v1/orders/revenue/7days");
+    res.data.sort(compare);
+    newData.value = res.data.map((item) => {
+      const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+      return {
+        day: DAYS[item._id - 1],
+        revenue: item.total,
+      };
+    });
+    console.log(newData.value);
+  } catch (error) {
+    console.log(error);
+  }
+};
+const labels = computed(() => newData.value.map((item) => item.day));
+const revenue = computed(() => newData.value.map((item) => item.revenue));
+const data = {
+  labels: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+  datasets: [
+    {
+      label: "Revenue last week",
+      backgroundColor: "#f87979",
+      data: [40, 20, 12, 39, 10, 40, 39],
+    },
+  ],
+};
+
 const getTotalRevenue = () => {
   let total = 0;
+
   orders.value.forEach((order) => {
-    total += order.totalAmount;
+    total += order.order.totalAmount;
   });
   return total;
 };
+
 onMounted(() => {
   getOrders();
   getBooks();
   getUsers();
+  getRevenueLast7Days();
 });
 </script>
 
