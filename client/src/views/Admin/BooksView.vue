@@ -271,6 +271,7 @@ import { useStore } from "vuex";
 import { onMounted, ref, reactive } from "vue";
 import * as moment from "moment";
 import api from "@/services/api";
+import { setHeaders } from "@/services/isAdmin";
 const store = useStore();
 const open = ref(false);
 const create = ref(false);
@@ -314,13 +315,16 @@ const onFileChange = (e) => {
   formState.book.image = fileName;
 };
 
-console.log(formState);
 const handleOk = async () => {
   try {
     confirmLoading.value = true;
-    const res = await api.put(`/api/v1/books/${formState.book._id}`, {
-      book: formState.book,
-    });
+    const res = await api.put(
+      `/api/v1/books/${formState.book._id}`,
+      {
+        book: formState.book,
+      },
+      setHeaders()
+    );
     confirmLoading.value = false;
     open.value = false;
     store.commit("setToast", {
@@ -345,9 +349,13 @@ const handleOk = async () => {
 const handleOk1 = async () => {
   try {
     confirmLoading.value = true;
-    const res = await api.post(`/api/v1/books/add`, {
-      book: formState.book,
-    });
+    const res = await api.post(
+      `/api/v1/books/add`,
+      {
+        book: formState.book,
+      },
+      setHeaders()
+    );
     confirmLoading.value = false;
     create.value = false;
     store.commit("setToast", {
@@ -372,7 +380,10 @@ const handleOk1 = async () => {
 const handleDelete = async () => {
   try {
     confirmLoading.value = true;
-    const res = await api.delete(`/api/v1/books/${formState.book._id}`);
+    const res = await api.delete(
+      `/api/v1/books/${formState.book._id}`,
+      setHeaders()
+    );
     confirmLoading.value = false;
     isDelete.value = false;
     store.commit("setToast", {

@@ -1,4 +1,5 @@
 const express = require("express");
+const { isAdmin } = require("../middlewares/auth.js");
 const router = express.Router();
 
 const {
@@ -11,10 +12,10 @@ const {
 } = require("../controllers/BookController");
 
 router.get("/search/:title", searchBook);
-router.post("/add", addBook);
+router.post("/add", isAdmin, addBook);
 router.get("/", getBooks);
-router.put("/:id", updateBook);
+router.put("/:id", isAdmin, updateBook);
 router.get("/:id", getBook);
-router.delete("/:id", deleteBook);
+router.delete("/:id", isAdmin, deleteBook);
 
 module.exports = router;

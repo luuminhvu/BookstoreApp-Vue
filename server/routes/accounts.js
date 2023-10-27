@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const { isAdmin, auth } = require("../middlewares/auth.js");
 const {
   updateUser,
   deleteUser,
@@ -7,10 +8,10 @@ const {
   changePassword,
   getUsers,
 } = require("../controllers/UserController");
-router.get("/", getUsers);
+router.get("/", isAdmin, getUsers);
 router.get("/:id", getUser);
-router.put("/:id", updateUser);
-router.delete("/:id", deleteUser);
-router.put("/change-password/:id", changePassword);
+router.put("/:id", auth, updateUser);
+router.delete("/:id", auth, deleteUser);
+router.put("/change-password/:id", auth, changePassword);
 
 module.exports = router;

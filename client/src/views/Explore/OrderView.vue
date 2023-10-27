@@ -353,12 +353,13 @@ import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 import * as moment from "moment";
 import { CloseOutlined } from "@ant-design/icons-vue";
+import { setHeaders } from "@/services/isAdmin";
 const route = useRoute();
 const store = useStore();
 const userId = route.params.id;
 const order = ref([]);
 const getOrder = async () => {
-  const res = await api.get("/api/v1/orders/" + userId);
+  const res = await api.get("/api/v1/orders/" + userId, setHeaders());
   order.value = res.data;
   console.log(order.value);
 };

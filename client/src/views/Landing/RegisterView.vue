@@ -119,13 +119,5 @@ const onSubmit = async () => {
 const resetForm = () => {
   formRef.value.resetFields();
 };
-// const register = async (e) => {
-//   e.preventDefault();
-//   if (user.username || user.password) {
-//     await store.dispatch("auth/register", user);
-//   } else {
-//     alert("Please enter a username and password");
-//   }
-// };
 </script>
 <style lang=""></style>

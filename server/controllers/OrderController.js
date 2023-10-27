@@ -4,7 +4,6 @@ const moment = require("moment");
 const createOrder = async (req, res) => {
   try {
     const order = req.body.cartItems; // Lấy đối tượng cartItems từ req.body
-    console.log(order);
 
     // Tạo một đối tượng Order từ dữ liệu đầu vào
     const newOrder = new Order({
@@ -29,10 +28,8 @@ const createOrder = async (req, res) => {
 
 const getOrder = async (req, res) => {
   try {
-    console.log(req.params.id);
     const orders = await Order.find({ userId: req.params.id });
     res.status(200).json(orders);
-    console.log(orders);
   } catch (error) {
     console.log(error);
   }
@@ -115,7 +112,6 @@ const updateOrder = async (req, res) => {
     const status = updatedData.status;
     const dateDelivered = updatedData.dateDelivered;
     const order = await Order.findById(orderId);
-    console.log(updatedData);
     if (!order) {
       return res.status(404).json({ msg: "Order not found" });
     }

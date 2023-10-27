@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Cookies from "js-cookie";
+import { isAdmin } from "@/services/isAdmin";
 import HomeView from "../views/Explore/HomeView.vue";
 import LoginView from "../views/Landing/LoginView.vue";
 import RegisterView from "../views/Landing/RegisterView.vue";
@@ -131,6 +132,14 @@ const routes = [
         component: OrdersView,
       },
     ],
+    beforeEnter: (to, from, next) => {
+      // ...
+      if (Cookies.get("token") && isAdmin()) {
+        next();
+      } else {
+        next("/");
+      }
+    },
   },
 ];
 

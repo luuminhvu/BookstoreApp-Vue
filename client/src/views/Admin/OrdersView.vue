@@ -117,8 +117,14 @@
                   </div>
                 </td>
                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                  <p class="text-gray-900 whitespace-no-wrap">
+                  <p
+                    class="text-gray-900 whitespace-no-wrap"
+                    v-if="order.fullname"
+                  >
                     {{ order.fullname }}
+                  </p>
+                  <p class="text-gray-900 whitespace-no-wrap" v-else>
+                    User does not exist
                   </p>
                 </td>
                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
@@ -161,6 +167,7 @@
                 </td>
                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                   <span
+                    @click="showModal1(order.order._id)"
                     class="relative inline-block px-3 py-1 font-semibold text-green-900 leading-tight"
                   >
                     <span
@@ -238,15 +245,26 @@
       </a-form>
     </a-modal>
   </div>
+  <div>
+    <a-modal
+      v-model:open="isDelete"
+      title="Do you want to delete this order?"
+      :confirm-loading="confirmLoading"
+      @ok="handleDelete"
+    >
+    </a-modal>
+  </div>
 </template>
 <script setup>
 import { ref, onMounted, reactive } from "vue";
 import { useStore } from "vuex";
 import api from "@/services/api";
 import * as moment from "moment";
+import { setHeaders } from "@/services/isAdmin";
 const orders = ref([]);
 const store = useStore();
 const open = ref(false);
+const isDelete = ref(false);
 const confirmLoading = ref(false);
 const showModal = (_id) => {
   open.value = true;
@@ -257,6 +275,25 @@ const showModal = (_id) => {
   );
   formState.status = order.order.status;
 };
+const showModal1 = (_id) => {
+  isDelete.value = true;
+  formState._id = _id;
+};
+const handleDelete = async () => {
+  try {
+    confirmLoading.value = true;
+    const res = await api.delete(
+      `/api/v1/orders/${formState._id}`,
+      setHeaders()
+    );
+    getOrders();
+    confirmLoading.value = false;
+    isDelete.value = false;
+  } catch (error) {
+    console.log(error);
+    confirmLoading.value = false;
+  }
+};
 const formState = reactive({
   status: "",
   orderDelivered: "",
@@ -264,11 +301,14 @@ const formState = reactive({
 const handleOk = async () => {
   try {
     confirmLoading.value = true;
-    alert(formState.orderDelivered);
-    const res = await api.put(`/api/v1/orders/${formState._id}`, {
-      status: formState.status,
-      dateDelivered: formState.orderDelivered,
-    });
+    const res = await api.put(
+      `/api/v1/orders/${formState._id}`,
+      {
+        status: formState.status,
+        dateDelivered: formState.orderDelivered,
+      },
+      setHeaders()
+    );
     getOrders();
     confirmLoading.value = false;
     open.value = false;
@@ -280,10 +320,9 @@ const handleOk = async () => {
 const getOrders = async () => {
   try {
     store.commit("setLoading", true, { root: true });
-    const res = await api.get("/api/v1/orders");
+    const res = await api.get("/api/v1/orders", setHeaders());
     orders.value = res.data;
     store.commit("setLoading", false, { root: true });
-    console.log(orders.value);
   } catch (error) {
     console.log(error);
     store.commit("setLoading", false, { root: true });

@@ -91,6 +91,7 @@
 import jsCookie from "js-cookie";
 import { reactive, computed } from "vue";
 import api from "@/services/api";
+import { setHeaders } from "@/services/isAdmin";
 const account = reactive(JSON.parse(jsCookie.get("account")));
 import { useStore } from "vuex";
 const store = useStore();
@@ -101,7 +102,11 @@ const updateUser = async () => {
   store.commit("setLoading", true, { root: true });
   try {
     console.log(account);
-    const res = await api.put(`/api/v1/accounts/${account._id}`, { account });
+    const res = await api.put(
+      `/api/v1/accounts/${account._id}`,
+      { account },
+      setHeaders()
+    );
     store.commit("setLoading", false, { root: true });
     store.commit("setToast", {
       show: true,
@@ -127,7 +132,10 @@ const updateUser = async () => {
 const deleteUser = async () => {
   store.commit("setLoading", true, { root: true });
   try {
-    const res = await api.delete(`/api/v1/accounts/${account._id}`);
+    const res = await api.delete(
+      `/api/v1/accounts/${account._id}`,
+      setHeaders()
+    );
     jsCookie.remove("token");
     jsCookie.remove("account");
     store.commit("setLoading", false, { root: true });

@@ -222,7 +222,7 @@
     </div>
 
     <div class="mt-8 px-4 bg-white rounded-lg shadow-lg">
-      <Line :data="data" :options="options" />
+      <Line :data="data" />
     </div>
 
     <footer
@@ -246,6 +246,7 @@ import { useStore } from "vuex";
 import { computed, onMounted, ref } from "vue";
 import api from "@/services/api";
 import * as moment from "moment";
+import { setHeaders } from "@/services/isAdmin";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -267,12 +268,11 @@ ChartJS.register(
 );
 import { Line } from "vue-chartjs";
 
-const newData = ref([]);
 const compare = (a, b) => {
-  if (a._id < b._id) {
+  if (a._id > b._id) {
     return 1;
   }
-  if (a._id > b._id) {
+  if ((a._id, b._id)) {
     return -1;
   }
   return 0;
@@ -292,7 +292,7 @@ const users = ref([]);
 const getOrders = async () => {
   store.commit("setLoading", true, { root: true });
   try {
-    const res = await api.get("/api/v1/orders");
+    const res = await api.get("/api/v1/orders", setHeaders());
     store.commit("setLoading", false, { root: true });
     orders.value = res.data;
   } catch (error) {
@@ -308,7 +308,7 @@ const getOrders = async () => {
 const getBooks = async () => {
   store.commit("setLoading", true, { root: true });
   try {
-    const res = await api.get("/api/v1/books");
+    const res = await api.get("/api/v1/books", setHeaders());
     store.commit("setLoading", false, { root: true });
     books.value = res.data.books;
   } catch (error) {
@@ -324,7 +324,7 @@ const getBooks = async () => {
 const getUsers = async () => {
   store.commit("setLoading", true, { root: true });
   try {
-    const res = await api.get("/api/v1/accounts");
+    const res = await api.get("/api/v1/accounts", setHeaders());
     store.commit("setLoading", false, { root: true });
     users.value = res.data;
   } catch (error) {
@@ -338,35 +338,6 @@ const getUsers = async () => {
   }
 };
 
-const getRevenueLast7Days = async () => {
-  try {
-    const res = await api.get("/api/v1/orders/revenue/7days");
-    res.data.sort(compare);
-    newData.value = res.data.map((item) => {
-      const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-      return {
-        day: DAYS[item._id - 1],
-        revenue: item.total,
-      };
-    });
-    console.log(newData.value);
-  } catch (error) {
-    console.log(error);
-  }
-};
-const labels = computed(() => newData.value.map((item) => item.day));
-const revenue = computed(() => newData.value.map((item) => item.revenue));
-const data = {
-  labels: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-  datasets: [
-    {
-      label: "Revenue last week",
-      backgroundColor: "#f87979",
-      data: [40, 20, 12, 39, 10, 40, 39],
-    },
-  ],
-};
-
 const getTotalRevenue = () => {
   let total = 0;
 
@@ -375,12 +346,37 @@ const getTotalRevenue = () => {
   });
   return total;
 };
+const dataForChart = ref([]);
+const getRevenueLast7Day = async () => {
+  try {
+    const res = await api.get("/api/v1/orders/revenue/7days", setHeaders());
+    res.data.sort(compare);
+    dataForChart.value = res.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+const data = computed(() => {
+  const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  return {
+    labels: dataForChart.value.map((item) => DAYS[item._id - 1]),
+    datasets: [
+      {
+        label: "Revenue Last 7 Days",
+        data: dataForChart.value.map((item) => item.total),
+        fill: false,
+        borderColor: "rgb(75, 192, 192)",
+        tension: 0.1,
+      },
+    ],
+  };
+});
 
-onMounted(() => {
+onMounted(async () => {
   getOrders();
   getBooks();
   getUsers();
-  getRevenueLast7Days();
+  getRevenueLast7Day();
 });
 </script>
 

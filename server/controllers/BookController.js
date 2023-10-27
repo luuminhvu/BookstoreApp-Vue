@@ -2,7 +2,6 @@ const Book = require("../models/Book.js");
 
 const addBook = async (req, res) => {
   try {
-    console.log(req.body);
     const { title, category, price, image, desc } = req.body.book;
 
     // Check if both title and category are provided

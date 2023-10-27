@@ -103,7 +103,13 @@
                   </p>
                 </td>
                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                  <p class="text-gray-900 whitespace-no-wrap">Customer</p>
+                  <p
+                    class="text-gray-900 whitespace-no-wrap"
+                    v-if="user.isAdmin"
+                  >
+                    Admin
+                  </p>
+                  <p class="text-gray-900 whitespace-no-wrap" v-else>User</p>
                 </td>
                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                   <p class="text-gray-900 whitespace-no-wrap">
@@ -168,6 +174,7 @@
 import { ref, onMounted } from "vue";
 import { useStore } from "vuex";
 import api from "@/services/api";
+import { setHeaders } from "@/services/isAdmin";
 const store = useStore();
 const users = ref([]);
 const _id = ref("");
@@ -180,7 +187,7 @@ const showModal = (id) => {
 const handleDelete = async () => {
   try {
     confirmLoading.value = true;
-    const res = await api.delete(`/api/v1/accounts/${_id.value}`);
+    const res = await api.delete(`/api/v1/accounts/${_id.value}`, setHeaders());
     store.commit("setToast", {
       message: res.data.msg,
       type: "success",
@@ -201,7 +208,7 @@ const handleDelete = async () => {
 const getUsers = async () => {
   store.commit("setLoading", true, { root: true });
   try {
-    const res = await api.get("/api/v1/accounts");
+    const res = await api.get("/api/v1/accounts", setHeaders());
     store.commit("setLoading", false, { root: true });
     users.value = res.data;
   } catch (error) {

@@ -277,6 +277,7 @@
 import { useStore } from "vuex";
 import { computed, ref, onMounted } from "vue";
 import api from "@/services/api";
+import { setHeaders } from "@/services/isAdmin";
 const store = useStore();
 const logout = () => {
   store.dispatch("auth/logout");
@@ -314,9 +315,8 @@ const userNew = JSON.parse(user.value);
 const cart = computed(() => store.state.cart.cart);
 
 const getOrder = async () => {
-  const res = await api.get("/api/v1/orders/" + userNew._id);
+  const res = await api.get("/api/v1/orders/" + userNew._id, setHeaders());
   order.value = res.data;
-  console.log(order.value);
 };
 onMounted(() => {
   getOrder();

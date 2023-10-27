@@ -45,6 +45,7 @@
 import jsCookie from "js-cookie";
 import { reactive, computed, ref } from "vue";
 import api from "@/services/api";
+import { setHeaders } from "@/services/isAdmin";
 const account = reactive(JSON.parse(jsCookie.get("account")));
 import { useStore } from "vuex";
 const store = useStore();
@@ -62,7 +63,8 @@ const changePassword = async () => {
         id: account._id,
         password: password.value,
         newPassword: newPassword.value,
-      }
+      },
+      setHeaders()
     );
     store.commit("setLoading", false, { root: true });
     store.commit("setToast", {
