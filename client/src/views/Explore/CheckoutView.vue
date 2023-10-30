@@ -85,8 +85,124 @@
           </section>
         </form>
       </div>
+      <div class="rounded-md">
+        <section>
+          <h2
+            class="uppercase tracking-wide text-lg font-semibold text-gray-700 my-2"
+          >
+            Payment Expression
+          </h2>
+          <fieldset class="mb-3 bg-white shadow-lg rounded text-gray-600">
+            <label class="flex border-b border-gray-200 h-12 py-3 items-center">
+              <span class="text-right px-2">Cash on delivery</span>
+              <input
+                type="radio"
+                name="paymentMethod"
+                id="cashOnDelivery"
+                @change="picked = false"
+              />
+            </label>
+            <label class="flex border-b border-gray-200 h-12 py-3 items-center">
+              <span class="text-right px-2">Credit card</span>
+              <input
+                type="radio"
+                name="paymentMethod"
+                id="creditCard"
+                @change="picked = true"
+              />
+            </label>
+          </fieldset>
+        </section>
+      </div>
+      <div class="rounded-md" v-show="picked">
+        <form id="createOrder" action="create_payment_url" method="POST">
+          <div class="form-group">
+            <label class="font-bold">Số tiền</label>
+            <input
+              id="amount"
+              name="amount"
+              placeholder="Số tiền"
+              v-model="total"
+              class="form-control p-3 ml-3 border border-gray-300 rounded-md"
+              disabled
+            />
+          </div>
+          <div
+            class="form-group w-1/2 p-5 border border-gray-300 rounded-md mt-2"
+          >
+            <label class="font-bold">Chọn Phương thức thanh toán:</label>
+            <div class="controls p-3">
+              <input
+                type="radio"
+                name="bankCode"
+                id="defaultPaymentMethod"
+                value=""
+                checked="true"
+              />
+              <label class="radio-inline"> Cổng thanh toán VNPAYQR</label>
+            </div>
+            <div class="controls p-3">
+              <input
+                type="radio"
+                name="bankCode"
+                id="vnpayqrPaymentMethod"
+                value="VNPAYQR"
+              />
+              <label class="radio-inline">
+                Thanh toán qua ứng dụng hỗ trợ VNPAYQR</label
+              >
+            </div>
+            <div class="controls p-3">
+              <input
+                type="radio"
+                name="bankCode"
+                id="vnbankPaymentMethod"
+                value="VNBANK"
+              />
+              <label class="radio-inline">
+                Thanh toán qua ATM-Tài khoản ngân hàng nội địa</label
+              >
+            </div>
+            <div class="controls p-3">
+              <input
+                type="radio"
+                name="bankCode"
+                id="intcardPaymentMethod"
+                value="INTCARD"
+              />
+              <label class="radio-inline"> Thanh toán qua thẻ quốc tế</label>
+            </div>
+          </div>
+          <div
+            class="form-group w-1/2 p-5 border border-gray-300 rounded-md mt-2"
+          >
+            <label class="control-label font-bold">Ngôn ngữ</label>
+            <div class="controls p-3">
+              <input
+                type="radio"
+                name="language"
+                id="vnLanguage"
+                value="vn"
+                checked="true"
+              />
+              <label class="radio-inline"> Tiếng việt</label>
+            </div>
+            <div class="controls p-3">
+              <input type="radio" name="language" id="enLanguage" value="en" />
+              <label class="radio-inline">Tiếng anh</label>
+            </div>
+          </div>
+          <button
+            id="btnPopup"
+            type="submit"
+            class="btn btn-primary bg-cyan-500 p-3 mt-3 border border-gray-300 rounded-md hover:bg-cyan-600 transition-all duration-200"
+          >
+            Thanh toán
+          </button>
+        </form>
+      </div>
       <PayButton
-        v-if="validateForm()"
+        v-show="!picked && validateForm()"
         :cartItems="cartItems"
         class="submit-button px-4 py-3 rounded-full bg-pink-400 text-white focus:ring focus:outline-none w-full text-xl font-semibold transition-colors"
       >
@@ -152,6 +268,7 @@
 import { useStore } from "vuex";
 import { computed, ref, watch } from "vue";
 import PayButton from "@/components/PayButton.vue";
+import { FastBackwardFilled } from "@ant-design/icons-vue";
 const store = useStore();
 const userN = computed(() => store.state.auth.account);
 const user = JSON.parse(userN.value);
@@ -166,6 +283,7 @@ const newUser = ref({
   phone: "",
   city: "",
 });
+const picked = ref(false);
 
 watch(
   () => userN.value,

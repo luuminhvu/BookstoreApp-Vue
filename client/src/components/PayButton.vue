@@ -9,9 +9,9 @@
 </template>
 
 <script setup>
-import { defineProps } from "vue";
 import { computed } from "vue";
 import api from "@/services/api";
+import { setHeaders } from "@/services/isAdmin";
 import { useStore } from "vuex";
 const store = useStore();
 const loading = computed(() => store.state.loading);
@@ -23,9 +23,13 @@ const pay = async () => {
   store.commit("setLoading", true, { root: true });
   console.log(props.cartItems);
   try {
-    const res = await api.post("/api/v1/orders/add", {
-      cartItems: props.cartItems,
-    });
+    const res = await api.post(
+      "/api/v1/orders/add",
+      {
+        cartItems: props.cartItems,
+      },
+      setHeaders()
+    );
     store.commit("setLoading", false, { root: true });
     store.commit("setToast", {
       show: true,
