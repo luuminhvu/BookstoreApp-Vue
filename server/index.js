@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const dotenv = require("dotenv");
+const bodyParser = require("body-parser");
 const path = require("path");
 const UserRouter = require("./routes/auth.js");
 const AccountRouter = require("./routes/accounts.js");
@@ -11,7 +12,9 @@ const OrderRouter = require("./routes/order.js");
 const app = express();
 app.use(express.json());
 app.use(cors());
+app.use(bodyParser.json());
 dotenv.config(path.join(__dirname, ".env"));
+dotenv.config({ path: path.join(__dirname, "../config/default.json") });
 const URI = process.env.MONGODB_URI;
 // Connect to MongoDB
 app.get("/", (req, res) => {

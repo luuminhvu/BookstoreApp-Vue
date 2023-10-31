@@ -100,6 +100,8 @@
                 name="paymentMethod"
                 id="cashOnDelivery"
                 @change="picked = false"
+                v-model="newUser.paymentMethod"
+                value="COD"
               />
             </label>
             <label class="flex border-b border-gray-200 h-12 py-3 items-center">
@@ -109,97 +111,109 @@
                 name="paymentMethod"
                 id="creditCard"
                 @change="picked = true"
+                v-model="newUser.paymentMethod"
+                value="creditCard"
               />
             </label>
           </fieldset>
         </section>
       </div>
       <div class="rounded-md" v-show="picked">
-        <form id="createOrder" action="create_payment_url" method="POST">
-          <div class="form-group">
-            <label class="font-bold">Số tiền</label>
+        <div class="form-group">
+          <label class="font-bold">Số tiền</label>
+          <input
+            id="amount"
+            name="amount"
+            placeholder="Số tiền"
+            v-model="total"
+            class="form-control p-3 ml-3 border border-gray-300 rounded-md"
+            disabled
+          />
+        </div>
+        <div
+          class="form-group w-1/2 p-5 border border-gray-300 rounded-md mt-2"
+        >
+          <label class="font-bold">Chọn Phương thức thanh toán:</label>
+          <div class="controls p-3">
             <input
-              id="amount"
-              name="amount"
-              placeholder="Số tiền"
-              v-model="total"
-              class="form-control p-3 ml-3 border border-gray-300 rounded-md"
-              disabled
+              type="radio"
+              name="bankCode"
+              id="defaultPaymentMethod"
+              value=""
+              checked="true"
+              @change="optionChoose.bankCode = ''"
             />
+            <label class="radio-inline"> Cổng thanh toán VNPAYQR</label>
           </div>
-          <div
-            class="form-group w-1/2 p-5 border border-gray-300 rounded-md mt-2"
-          >
-            <label class="font-bold">Chọn Phương thức thanh toán:</label>
-            <div class="controls p-3">
-              <input
-                type="radio"
-                name="bankCode"
-                id="defaultPaymentMethod"
-                value=""
-                checked="true"
-              />
-              <label class="radio-inline"> Cổng thanh toán VNPAYQR</label>
-            </div>
-            <div class="controls p-3">
-              <input
-                type="radio"
-                name="bankCode"
-                id="vnpayqrPaymentMethod"
-                value="VNPAYQR"
-              />
-              <label class="radio-inline">
-                Thanh toán qua ứng dụng hỗ trợ VNPAYQR</label
-              >
-            </div>
-            <div class="controls p-3">
-              <input
-                type="radio"
-                name="bankCode"
-                id="vnbankPaymentMethod"
-                value="VNBANK"
-              />
-              <label class="radio-inline">
-                Thanh toán qua ATM-Tài khoản ngân hàng nội địa</label
-              >
-            </div>
-            <div class="controls p-3">
-              <input
-                type="radio"
-                name="bankCode"
-                id="intcardPaymentMethod"
-                value="INTCARD"
-              />
-              <label class="radio-inline"> Thanh toán qua thẻ quốc tế</label>
-            </div>
+          <div class="controls p-3">
+            <input
+              type="radio"
+              name="bankCode"
+              id="vnpayqrPaymentMethod"
+              value="VNPAYQR"
+              @change="optionChoose.bankCode = 'VNPAYQR'"
+            />
+            <label class="radio-inline">
+              Thanh toán qua ứng dụng hỗ trợ VNPAYQR</label
+            >
           </div>
-          <div
-            class="form-group w-1/2 p-5 border border-gray-300 rounded-md mt-2"
-          >
-            <label class="control-label font-bold">Ngôn ngữ</label>
-            <div class="controls p-3">
-              <input
-                type="radio"
-                name="language"
-                id="vnLanguage"
-                value="vn"
-                checked="true"
-              />
-              <label class="radio-inline"> Tiếng việt</label>
-            </div>
-            <div class="controls p-3">
-              <input type="radio" name="language" id="enLanguage" value="en" />
-              <label class="radio-inline">Tiếng anh</label>
-            </div>
+          <div class="controls p-3">
+            <input
+              type="radio"
+              name="bankCode"
+              id="vnbankPaymentMethod"
+              value="VNBANK"
+              @change="optionChoose.bankCode = 'VNBANK'"
+            />
+            <label class="radio-inline">
+              Thanh toán qua ATM-Tài khoản ngân hàng nội địa</label
+            >
           </div>
-          <button
-            id="btnPopup"
-            type="submit"
-            class="btn btn-primary bg-cyan-500 p-3 mt-3 border border-gray-300 rounded-md hover:bg-cyan-600 transition-all duration-200"
-          >
-            Thanh toán
-          </button>
-        </form>
+          <div class="controls p-3">
+            <input
+              type="radio"
+              name="bankCode"
+              id="intcardPaymentMethod"
+              value="INTCARD"
+              @change="optionChoose.bankCode = 'INTCARD'"
+            />
+            <label class="radio-inline"> Thanh toán qua thẻ quốc tế</label>
+          </div>
+        </div>
+        <div
+          class="form-group w-1/2 p-5 border border-gray-300 rounded-md mt-2"
+        >
+          <label class="control-label font-bold">Ngôn ngữ</label>
+          <div class="controls p-3">
+            <input
+              type="radio"
+              name="language"
+              id="vnLanguage"
+              value="vn"
+              checked="true"
+              @change="optionChoose.language = 'vn'"
+            />
+            <label class="radio-inline"> Tiếng việt</label>
+          </div>
+          <div class="controls p-3">
+            <input
+              type="radio"
+              name="language"
+              id="enLanguage"
+              value="en"
+              @change="optionChoose.language = 'en'"
+            />
+            <label class="radio-inline">Tiếng anh</label>
+          </div>
+        </div>
+        <button
+          @click="pay"
+          id="btnPopup"
+          type="submit"
+          class="btn btn-primary bg-cyan-500 p-3 mt-3 border border-gray-300 rounded-md hover:bg-cyan-600 transition-all duration-200"
+        >
+          Thanh toán
+        </button>
       </div>
       <PayButton
         v-show="!picked && validateForm()"
@@ -266,9 +280,9 @@
 
 <script setup>
 import { useStore } from "vuex";
-import { computed, ref, watch } from "vue";
+import { computed, reactive, ref, watch } from "vue";
 import PayButton from "@/components/PayButton.vue";
-import { FastBackwardFilled } from "@ant-design/icons-vue";
+import api from "@/services/api";
 const store = useStore();
 const userN = computed(() => store.state.auth.account);
 const user = JSON.parse(userN.value);
@@ -279,11 +293,22 @@ const total = computed(() =>
     0
   )
 );
+const loading = computed(() => {
+  return store.state.loading;
+});
+const toast = computed(() => {
+  return store.state.toast;
+});
 const newUser = ref({
   phone: "",
   city: "",
+  paymentMethod: "COD",
 });
 const picked = ref(false);
+const optionChoose = reactive({
+  bankCode: "",
+  language: "vn",
+});
 
 watch(
   () => userN.value,
@@ -291,9 +316,14 @@ watch(
     if (userN.value) {
       newUser.value.phone = user.phone;
       newUser.value.city = user.city;
+      newUser.value.paymentMethod = "COD";
     }
   }
 );
+const checkoutCart = () => {
+  try {
+  } catch (error) {}
+};
 
 const validateForm = () => {
   if (validatePhone() && validateCity()) {
@@ -320,7 +350,21 @@ const cartItems = computed(() => ({
   phone: newUser.value.phone,
   city: newUser.value.city,
   total: total.value,
+  paymentMethod: newUser.value.paymentMethod,
 }));
+const pay = async () => {
+  try {
+    store.commit("setLoading", true, { root: true });
+    const res = await api.post("/api/v1/orders/create_payment_url", {
+      ...cartItems.value,
+      ...optionChoose,
+    });
+    store.commit("setLoading", false, { root: true });
+    window.location.href = res.data.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
 </script>
 
 <style lang=""></style>

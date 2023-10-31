@@ -22,6 +22,10 @@ const orderSchema = moongose.Schema(
       type: Number,
       required: true,
     },
+    paymentMethod: {
+      type: String,
+      default: "COD",
+    },
     dateOrdered: {
       type: Date,
       default: Date.now,

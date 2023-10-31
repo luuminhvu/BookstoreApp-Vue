@@ -9,7 +9,11 @@ const {
   getTotalRevenue,
   updateOrder,
   getRevenueLast7Days,
+  createPaymentUrl,
+  vnpayReturn,
 } = require("../controllers/OrderController");
+router.post("/create_payment_url", createPaymentUrl);
+router.get("/vnpay_return", vnpayReturn);
 router.get("/", isAdmin, getOrders);
 router.get("/revenue", isAdmin, getTotalRevenue);
 router.get("/revenue/7days", isAdmin, getRevenueLast7Days);

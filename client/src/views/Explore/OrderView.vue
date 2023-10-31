@@ -361,7 +361,6 @@ const order = ref([]);
 const getOrder = async () => {
   const res = await api.get("/api/v1/orders/" + userId, setHeaders());
   order.value = res.data;
-  console.log(order.value);
 };
 const user = computed(() => store.state.auth.account);
 const userNew = JSON.parse(user.value);
@@ -371,7 +370,7 @@ onMounted(() => {
 const deleteOrder = async (item) => {
   try {
     store.commit("setLoading", true, { root: true });
-    const res = await api.delete("/api/v1/orders/" + item._id);
+    const res = await api.delete("/api/v1/orders/" + item._id, setHeaders());
     console.log(res);
     getOrder();
     store.commit("setLoading", false, { root: true });
@@ -380,7 +379,7 @@ const deleteOrder = async (item) => {
       message: res.data.msg,
       type: "success",
     });
-  } catch {
+  } catch (err) {
     store.commit("setLoading", false);
     store.commit("setToast", {
       status: true,

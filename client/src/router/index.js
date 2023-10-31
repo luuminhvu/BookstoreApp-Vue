@@ -19,7 +19,7 @@ import DashboardView from "../views/Admin/DashboardView.vue";
 import BooksView from "../views/Admin/BooksView.vue";
 import UsersView from "../views/Admin/UsersView.vue";
 import OrdersView from "../views/Admin/OrdersView.vue";
-import CardCheckout from "../views/Explore/CardCheckout.vue";
+import CardCheckoutSuccess from "../views/Explore/CardCheckoutSuccess.vue";
 
 const routes = [
   {
@@ -98,9 +98,9 @@ const routes = [
         component: CheckoutSuccessView,
       },
       {
-        path: "create_payment_url",
-        name: "CardCheckout",
-        component: CardCheckout,
+        path: "card-checkout-success",
+        name: "CardCheckoutSuccess",
+        component: CardCheckoutSuccess,
       },
     ],
     beforeEnter: (to, from, next) => {

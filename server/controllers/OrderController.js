@@ -3,6 +3,22 @@ const User = require("../models/User");
 const moment = require("moment");
 const request = require("request");
 let $ = require("jquery");
+function sortObject(obj) {
+  let sorted = {};
+  let str = [];
+  let key;
+  for (key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      str.push(encodeURIComponent(key));
+    }
+  }
+  str.sort();
+  for (key = 0; key < str.length; key++) {
+    sorted[str[key]] = encodeURIComponent(obj[str[key]]).replace(/%20/g, "+");
+  }
+  return sorted;
+}
+const cartItems = [];
 const createOrder = async (req, res) => {
   try {
     const order = req.body.cartItems; // Lấy đối tượng cartItems từ req.body
@@ -14,6 +30,7 @@ const createOrder = async (req, res) => {
       phone: order.phone,
       address: order.city,
       totalAmount: order.total,
+      paymentMethod: order.paymentMethod,
       dateDelivered: Date.now() + 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -130,7 +147,7 @@ const updateOrder = async (req, res) => {
     res.status(500).json({ msg: error.message });
   }
 };
-const createPaymentUrl = async (req, res, next) => {
+const createPaymentUrl = (req, res, next) => {
   process.env.TZ = "Asia/Ho_Chi_Minh";
 
   let date = new Date();
@@ -142,14 +159,15 @@ const createPaymentUrl = async (req, res, next) => {
     req.socket.remoteAddress ||
     req.connection.socket.remoteAddress;
 
-  let config = require("config");
+  let config = require("../config/default.json");
 
-  let tmnCode = config.get("vnp_TmnCode");
-  let secretKey = config.get("vnp_HashSecret");
-  let vnpUrl = config.get("vnp_Url");
-  let returnUrl = config.get("vnp_ReturnUrl");
+  let tmnCode = config.vnp_TmnCode;
+  let secretKey = config.vnp_HashSecret;
+  let vnpUrl = config.vnp_Url;
+  let returnUrl = config.vnp_ReturnUrl;
   let orderId = moment(date).format("DDHHmmss");
-  let amount = req.body.amount;
+  cartItems.push(req.body);
+  let amount = req.body.total;
   let bankCode = req.body.bankCode;
 
   let locale = req.body.language;
@@ -182,8 +200,51 @@ const createPaymentUrl = async (req, res, next) => {
   let signed = hmac.update(new Buffer(signData, "utf-8")).digest("hex");
   vnp_Params["vnp_SecureHash"] = signed;
   vnpUrl += "?" + querystring.stringify(vnp_Params, { encode: false });
+  console.log(vnpUrl);
+  res.status(200).json({ code: "00", data: vnpUrl });
+};
+const vnpayReturn = async (req, res, next) => {
+  console.log(req.query);
+  let vnp_Params = req.query;
 
-  res.redirect(vnpUrl);
+  let secureHash = vnp_Params["vnp_SecureHash"];
+
+  delete vnp_Params["vnp_SecureHash"];
+  delete vnp_Params["vnp_SecureHashType"];
+
+  vnp_Params = sortObject(vnp_Params);
+
+  let config = require("../config/default.json");
+  let tmnCode = config.vnp_TmnCode;
+  let secretKey = config.vnp_HashSecret;
+
+  let querystring = require("qs");
+  let signData = querystring.stringify(vnp_Params, { encode: false });
+  let crypto = require("crypto");
+  let hmac = crypto.createHmac("sha512", secretKey);
+  let signed = hmac.update(new Buffer(signData, "utf-8")).digest("hex");
+
+  if (secureHash === signed) {
+    //Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua
+    const order = cartItems.pop();
+    const newOrder = new Order({
+      userId: order.userId,
+      books: order.items,
+      phone: order.phone,
+      address: order.city,
+      totalAmount: order.total,
+      paymentMethod: order.paymentMethod,
+      dateDelivered: Date.now() + 7 * 24 * 60 * 60 * 1000,
+    });
+
+    // Lưu đơn hàng mới vào cơ sở dữ liệu
+    await newOrder.save();
+    // res.render("success", { code: vnp_Params["vnp_ResponseCode"] })
+    res.status(200).json({ code: vnp_Params["vnp_ResponseCode"] });
+  } else {
+    // res.render("success", { code: "97" });
+    res.status(200).json({ code: "97" });
+  }
 };
 module.exports = {
   createOrder,
@@ -194,4 +255,5 @@ module.exports = {
   updateOrder,
   getRevenueLast7Days,
   createPaymentUrl,
+  vnpayReturn,
 };
