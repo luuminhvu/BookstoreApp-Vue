@@ -57,7 +57,7 @@
                 <img
                   class="h-[190px] w-[300px] object-fit"
                   alt="example"
-                  src="@/assets/phuongphapthugian.png"
+                  :src="require(`@/assets/${book.image}`)"
                 />
               </router-link>
             </template>

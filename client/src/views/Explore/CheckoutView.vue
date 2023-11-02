@@ -1,5 +1,5 @@
 <template>
-  <div class="h-screen grid grid-cols-3">
+  <div class="grid grid-cols-3">
     <div class="lg:col-span-2 col-span-3 bg-indigo-50 space-y-8 px-12">
       <div
         class="mt-8 p-4 relative flex flex-col sm:flex-row sm:items-center bg-white shadow rounded-md"
@@ -207,6 +207,7 @@
           </div>
         </div>
         <button
+          v-show="picked && validateForm()"
           @click="pay"
           id="btnPopup"
           type="submit"

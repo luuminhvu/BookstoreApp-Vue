@@ -200,11 +200,9 @@ const createPaymentUrl = (req, res, next) => {
   let signed = hmac.update(new Buffer(signData, "utf-8")).digest("hex");
   vnp_Params["vnp_SecureHash"] = signed;
   vnpUrl += "?" + querystring.stringify(vnp_Params, { encode: false });
-  console.log(vnpUrl);
   res.status(200).json({ code: "00", data: vnpUrl });
 };
 const vnpayReturn = async (req, res, next) => {
-  console.log(req.query);
   let vnp_Params = req.query;
 
   let secureHash = vnp_Params["vnp_SecureHash"];
@@ -226,20 +224,24 @@ const vnpayReturn = async (req, res, next) => {
 
   if (secureHash === signed) {
     //Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua
-    const order = cartItems.pop();
-    const newOrder = new Order({
-      userId: order.userId,
-      books: order.items,
-      phone: order.phone,
-      address: order.city,
-      totalAmount: order.total,
-      paymentMethod: order.paymentMethod,
-      dateDelivered: Date.now() + 7 * 24 * 60 * 60 * 1000,
-    });
 
-    // Lưu đơn hàng mới vào cơ sở dữ liệu
-    await newOrder.save();
     // res.render("success", { code: vnp_Params["vnp_ResponseCode"] })
+    if (vnp_Params["vnp_ResponseCode"] == "00") {
+      const order = cartItems.pop();
+      const newOrder = new Order({
+        userId: order.userId,
+        books: order.items,
+        phone: order.phone,
+        address: order.city,
+        totalAmount: order.total,
+        paymentMethod: order.paymentMethod,
+        dateDelivered: Date.now() + 7 * 24 * 60 * 60 * 1000,
+      });
+
+      // Lưu đơn hàng mới vào cơ sở dữ liệu
+      await newOrder.save();
+    }
+
     res.status(200).json({ code: vnp_Params["vnp_ResponseCode"] });
   } else {
     // res.render("success", { code: "97" });

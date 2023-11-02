@@ -215,6 +215,7 @@ const toggle = () => {
 const getBook = async () => {
   const res = await api.get(`/api/v1/books/${id}`);
   book.value = res.data.book;
+  console.log(book.value);
 };
 
 onMounted(() => {

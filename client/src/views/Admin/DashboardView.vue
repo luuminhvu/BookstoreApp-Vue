@@ -6,7 +6,7 @@
           <div
             class="border-2 card1 border-gray-50 shadow-lg m-4 p-2 bg-orange-500"
           >
-            <a href="" class="leading-10">
+            <a href="/admin/orders" class="leading-10">
               <div class="flex justify-between items-center">
                 <div>
                   <p class="text-2xl leading-10">{{ orders.length }}</p>
@@ -60,7 +60,7 @@
           <div
             class="card2 border-2 border-gray-50 shadow-lg m-4 p-2 bg-red-700"
           >
-            <a href="" class="leading-10">
+            <a href="/admin/books" class="leading-10">
               <div class="flex justify-between items-center">
                 <div>
                   <p class="text-2xl leading-10">{{ books.length }}</p>
@@ -114,7 +114,7 @@
           <div
             class="card3 border-2 border-gray-50 shadow-lg m-4 p-2 bg-yellow-400"
           >
-            <a href="" class="leading-10">
+            <a href="/admin/users" class="leading-10">
               <div class="flex justify-between items-center">
                 <div>
                   <p class="text-2xl leading-10">{{ users.length }}</p>
@@ -168,7 +168,7 @@
           <div
             class="card4 border-2 border-gray-50 shadow-lg m-4 p-2 bg-green-600"
           >
-            <a href="" class="leading-10">
+            <a href="/admin/orders" class="leading-10">
               <div class="flex justify-between items-center">
                 <div>
                   <p class="text-2xl leading-10">{{ getTotalRevenue() }} VNĐ</p>
