@@ -4,7 +4,7 @@
     @click="pay"
     class="btn bg-[#C92127] text-white py-2 px-3 rounded-md hover:bg-[#C92127] transition-all duration-200"
   >
-    Pay
+    Order
   </button>
 </template>
 

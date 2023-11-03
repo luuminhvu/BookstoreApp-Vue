@@ -20,6 +20,7 @@ import BooksView from "../views/Admin/BooksView.vue";
 import UsersView from "../views/Admin/UsersView.vue";
 import OrdersView from "../views/Admin/OrdersView.vue";
 import CardCheckoutSuccess from "../views/Explore/CardCheckoutSuccess.vue";
+import NotFound from "../views/Explore/NotFound.vue";
 
 const routes = [
   {
@@ -101,6 +102,11 @@ const routes = [
         path: "card-checkout-success",
         name: "CardCheckoutSuccess",
         component: CardCheckoutSuccess,
+      },
+      {
+        path: "/:pathMatch(.*)*",
+        name: "NotFound",
+        component: NotFound,
       },
     ],
     beforeEnter: (to, from, next) => {

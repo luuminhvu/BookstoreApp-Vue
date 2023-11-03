@@ -8,7 +8,7 @@
         <img
           alt="ecommerce"
           class="lg:w-1/2 w-full object-fit object-center rounded border border-gray-200 h-[700px]"
-          src="@/assets/phuongphapthugian.png"
+          :src="book.image"
         />
         <div class="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
           <h2 class="text-sm title-font text-gray-500 tracking-widest">
@@ -217,6 +217,7 @@ const getBook = async () => {
   book.value = res.data.book;
   console.log(book.value);
 };
+console.log(book.value);
 
 onMounted(() => {
   if (id) {
@@ -229,6 +230,7 @@ const addToCart = () => {
     id: book.value._id,
     title: book.value.title,
     price: book.value.price,
+    image: book.value.image,
     quantity: quantity.value,
   };
   store.dispatch("cart/addToCart", cartItem);

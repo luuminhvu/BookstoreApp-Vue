@@ -1,5 +1,5 @@
 const Book = require("../models/Book.js");
-
+const cloudinary = require("../utils/cloudinary.js");
 const addBook = async (req, res) => {
   try {
     const { title, category, price, image, desc } = req.body.book;
@@ -24,20 +24,29 @@ const addBook = async (req, res) => {
     }
 
     // Create a new Book instance
-    const newBook = new Book({
-      title: title,
-      category: category,
-      price: price,
-      image: image,
-      desc: desc,
-    });
 
-    // Save the book to the database
-    const savedBook = await newBook.save();
+    if (image) {
+      const savedImage = await cloudinary.uploader.upload(image, {
+        upload_preset: "BookStore",
+      });
+      if (savedImage) {
+        const books = new Book({
+          title: title,
+          category: category,
+          price: price,
+          image: savedImage.secure_url,
+          desc: desc,
+        });
 
-    // Respond with success message, book data
-    res.status(200).json({ msg: "Book created", book: savedBook });
+        // Save the book to the database
+        const savedBook = await books.save();
+
+        // Respond with success message, book data
+        res.status(200).json({ msg: "Book created", book: savedBook });
+      }
+    }
   } catch (err) {
+    console.log(err);
     return res.status(500).json({ msg: err.message });
   }
 };
@@ -74,22 +83,53 @@ const searchBook = async (req, res) => {
 };
 const updateBook = async (req, res) => {
   try {
+    // const bookId = req.params.id;
+    // const updatedData = req.body.book; // Assuming that req.body contains the updated book data
+    // console.log(updatedData);
+    // console.log(bookId);
+    // // Check if a 'updatedAt' field exists in your schema and set it to the current date.
+    // updatedData.updatedAt = new Date();
+
+    // const newBook = await Book.findByIdAndUpdate(bookId, updatedData, {
+    //   new: true,
+    // });
+
+    // if (!newBook) {
+    //   return res.status(404).json({ msg: "Book not found" });
+    // }
+
+    // res.status(200).json({ msg: "Book updated", book: newBook });
     const bookId = req.params.id;
-    const updatedData = req.body.book; // Assuming that req.body contains the updated book data
-    console.log(updatedData);
-    console.log(bookId);
-    // Check if a 'updatedAt' field exists in your schema and set it to the current date.
-    updatedData.updatedAt = new Date();
-
-    const newBook = await Book.findByIdAndUpdate(bookId, updatedData, {
-      new: true,
-    });
-
-    if (!newBook) {
-      return res.status(404).json({ msg: "Book not found" });
+    const { title, category, price, image, desc } = req.body.book;
+    if (image) {
+      const savedImage = await cloudinary.uploader.upload(image, {
+        upload_preset: "BookStore",
+      });
+      if (savedImage) {
+        const updatedData = {
+          title: title,
+          category: category,
+          price: price,
+          image: savedImage.secure_url,
+          desc: desc,
+        };
+        const newBook = await Book.findByIdAndUpdate(bookId, updatedData, {
+          new: true,
+        });
+        if (!newBook) {
+          return res.status(404).json({ msg: "Book not found" });
+        }
+        res.status(200).json({ msg: "Book updated", book: newBook });
+      }
+    } else {
+      const updatedData = await Book.findByIdAndUpdate(bookId, req.body.book, {
+        new: true,
+      });
+      if (!updatedData) {
+        return res.status(404).json({ msg: "Book not found" });
+      }
+      res.status(200).json({ msg: "Book updated", book: updatedData });
     }
-
-    res.status(200).json({ msg: "Book updated", book: newBook });
   } catch (error) {
     console.log(error);
     res.status(500).json({ msg: error.message });

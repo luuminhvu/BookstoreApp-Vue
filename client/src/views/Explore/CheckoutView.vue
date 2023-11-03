@@ -220,9 +220,7 @@
         v-show="!picked && validateForm()"
         :cartItems="cartItems"
         class="submit-button px-4 py-3 rounded-full bg-pink-400 text-white focus:ring focus:outline-none w-full text-xl font-semibold transition-colors"
-      >
-        Pay {{ total }} VNĐ
-      </PayButton>
+      />
     </div>
     <div class="col-span-1 bg-white lg:block hidden">
       <h1 class="py-6 border-b-2 text-xl text-gray-600 px-8">Order Summary</h1>
@@ -233,11 +231,7 @@
           class="grid grid-cols-6 gap-2 border-b-1"
         >
           <div class="col-span-1 self-center">
-            <img
-              src="@/assets/phuongphapthugian.png"
-              alt="Product"
-              class="rounded w-full"
-            />
+            <img :src="item.image" alt="Product" class="rounded w-full" />
           </div>
           <div class="flex flex-col col-span-3 pt-2">
             <span class="text-gray-600 text-md font-semi-bold">

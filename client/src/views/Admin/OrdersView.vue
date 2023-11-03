@@ -102,11 +102,13 @@
             <tbody>
               <tr v-for="order in orders" :key="order.order._id">
                 <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                  <div class="flex items-center">
+                  <div class="flex">
                     <div class="flex-shrink-0 w-10 h-10">
                       <img
-                        class="w-full h-full rounded-full"
-                        src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.2&w=160&h=160&q=80"
+                        class="w-full h-full rounded-full mb-3"
+                        v-for="book in order.order.books"
+                        :key="book.id"
+                        :src="book.image"
                         alt=""
                       />
                     </div>

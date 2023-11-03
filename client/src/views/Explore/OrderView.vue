@@ -49,14 +49,10 @@
               <div class="pb-4 md:pb-8 w-full md:w-40">
                 <img
                   class="w-full hidden md:block"
-                  src="@/assets/phuongphapthugian.png"
+                  :src="book.image"
                   alt="dress"
                 />
-                <img
-                  class="w-full md:hidden"
-                  src="@/assets/phuongphapthugian.png"
-                  alt="dress"
-                />
+                <img class="w-full md:hidden" :src="book.image" alt="dress" />
               </div>
               <div
                 class="border-b border-gray-200 md:flex-row flex-col flex justify-between items-start w-full pb-8 space-y-4 md:space-y-0"

@@ -10,9 +10,10 @@ const BookRouter = require("./routes/book.js");
 const OrderRouter = require("./routes/order.js");
 // Create a new Express app
 const app = express();
-app.use(express.json());
+
 app.use(cors());
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 dotenv.config(path.join(__dirname, ".env"));
 dotenv.config({ path: path.join(__dirname, "../config/default.json") });
 const URI = process.env.MONGODB_URI;
