@@ -1,8 +1,7 @@
-# Dockerfile  
 FROM node:18
-WORKDIR /app  
-COPY package.json /app  
-RUN npm install  
-COPY . /app  
-EXPOSE 5000 
-CMD npm start
+WORKDIR /usr/src/app
+COPY package.json /usr/src/app/
+RUN npm install
+COPY . /usr/src/app/
+EXPOSE 5000
+CMD ["npm", "start"]
